@@ -5,7 +5,7 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     Animator animator;
-    public ParticleSystem particleSystem;
+    public ParticleSystem ps;
     public AudioClip gunShot;
     private AudioSource audioSource;
    
@@ -19,16 +19,18 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        ps.Stop(true);
         if (Input.GetButtonDown("Fire1"))
         {
             audioSource.PlayOneShot(gunShot);
-            particleSystem.Play();
+            ps.Play();
             animator.SetBool("isFiring", true);
+            animator.Play("Recoil");
         }
         else
         {
             animator.SetBool("isFiring", false);
-            particleSystem.Stop();
+            
         }
     }
 }
