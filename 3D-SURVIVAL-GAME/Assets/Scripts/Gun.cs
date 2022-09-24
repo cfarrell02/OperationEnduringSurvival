@@ -6,7 +6,7 @@ public class Gun : MonoBehaviour
 {
     Animator animator;
     public ParticleSystem ps;
-    public AudioClip gunShot;
+    public AudioClip gunShot, reload;
     private AudioSource audioSource;
    
     // Start is called before the first frame update
@@ -19,18 +19,41 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ps.Stop(true);
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Reload"))
+            return;
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            animator.Play("Reload");
+            audioSource.PlayOneShot(reload);
+        }
+ 
+        else
+        if (Input.GetButtonDown("Fire2"))
+        {
+            animator.SetBool("isAiming", true);
+        }
+        else if (Input.GetButtonUp("Fire2"))
+        {
+            animator.SetBool("isAiming", false);
+        }
         if (Input.GetButtonDown("Fire1"))
         {
             audioSource.PlayOneShot(gunShot);
             ps.Play();
             animator.SetBool("isFiring", true);
-            animator.Play("Recoil");
+            if (!animator.GetBool("isAiming"))
+                animator.Play("Recoil");
+            else
+                animator.Play("Recoil Aimed");
         }
         else
         {
-            animator.SetBool("isFiring", false);
             
+            animator.SetBool("isFiring", false);
+            ps.Clear();
+            ps.Stop();
+
         }
+
     }
 }
