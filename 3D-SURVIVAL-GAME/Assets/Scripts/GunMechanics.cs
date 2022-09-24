@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GunMechanics : MonoBehaviour
 {
     public int ammo = 200,magazineCapacity = 20;
     private int magazine;
-    public float damage = 10f, range = 100f;
+    public float damage = 10f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
+    public GameObject impactEffect;
     Gun gun;
+    public TextMeshProUGUI text;
+    private float nextTimeToFire = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,9 +23,11 @@ public class GunMechanics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        text.SetText("Magazine: " + magazine + "\n Reserve Ammo: " + ammo);
         if (gun.isReloading()) return;
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire)
         {
+            nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
         }
         if (Input.GetKeyDown(KeyCode.R))
@@ -32,7 +38,6 @@ public class GunMechanics : MonoBehaviour
     }
     void Shoot()
     {
-        print("Magazine: " + magazine + " / Reserve Ammo: " + ammo);
         if (magazine < 1) {
             Reload();
             return;
@@ -42,8 +47,19 @@ public class GunMechanics : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
         {
-           // print(hit.transform.name);
+           Target target = hit.transform.GetComponent<Target>();
+            if (target != null)
+            {
+                target.TakeDamage(damage);
+            }
+            if (hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal*impactForce);
+            }
+            GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(impactGO, 5f);
         }
+
     }
     void Reload()
     {
