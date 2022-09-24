@@ -19,15 +19,6 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Reload"))
-            return;
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            animator.Play("Reload");
-            audioSource.PlayOneShot(reload);
-        }
- 
-        else
         if (Input.GetButtonDown("Fire2"))
         {
             animator.SetBool("isAiming", true);
@@ -36,24 +27,29 @@ public class Gun : MonoBehaviour
         {
             animator.SetBool("isAiming", false);
         }
-        if (Input.GetButtonDown("Fire1"))
-        {
-            audioSource.PlayOneShot(gunShot);
-            ps.Play();
-            animator.SetBool("isFiring", true);
-            if (!animator.GetBool("isAiming"))
-                animator.Play("Recoil");
-            else
-                animator.Play("Recoil Aimed");
-        }
-        else
-        {
-            
+
             animator.SetBool("isFiring", false);
             ps.Clear();
             ps.Stop();
 
-        }
-
+    }
+    public bool isReloading()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Reload");
+    }
+    public void Reload()
+    {
+        animator.Play("Reload");
+        audioSource.PlayOneShot(reload);
+    }
+    public void Shoot()
+    {
+        audioSource.PlayOneShot(gunShot);
+        ps.Play();
+        animator.SetBool("isFiring", true);
+        if (!animator.GetBool("isAiming"))
+            animator.Play("Recoil");
+        else
+            animator.Play("Recoil Aimed");
     }
 }

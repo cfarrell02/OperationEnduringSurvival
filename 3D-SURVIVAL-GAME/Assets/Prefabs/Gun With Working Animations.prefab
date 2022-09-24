@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &51815689
 Transform:
   m_ObjectHideFlags: 0
@@ -4916,7 +4916,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1367221095842194485, guid: 2cebc77724d713d419cb6a53b8d0470a, type: 3}
       propertyPath: m_Name
-      value: Pistol2_03
+      value: Pistol
       objectReference: {fileID: 0}
     - target: {fileID: 1367221095842691093, guid: 2cebc77724d713d419cb6a53b8d0470a, type: 3}
       propertyPath: m_RootOrder
@@ -5136,6 +5136,23 @@ MonoBehaviour:
   ps: {fileID: 1981406258}
   gunShot: {fileID: 8300000, guid: 6300e19bac0d23e4ebff3ad89b5cc53a, type: 3}
   reload: {fileID: 8300000, guid: 678454bfe1a3a20429b88dfd293fc3fc, type: 3}
+--- !u!114 &655627822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2530582521699327926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4327812219b9f4e8c26650be1a4691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: 200
+  magazineCapacity: 20
+  damage: 10
+  range: 100
+  fpsCam: {fileID: 0}
 --- !u!4 &2530582521699419030 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1367221095842691093, guid: 2cebc77724d713d419cb6a53b8d0470a, type: 3}
