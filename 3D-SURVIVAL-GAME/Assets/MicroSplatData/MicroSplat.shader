@@ -4,7 +4,7 @@
 //
 // Auto-generated shader code, don't hand edit!
 //
-//   Unity Version: 2021.3.8f1
+//   Unity Version: 2021.3.10f1
 //   MicroSplat Version: 3.9
 //   Render Pipeline: Standard
 //   Platform: WindowsEditor
@@ -16,6 +16,9 @@ Shader "Terrain"
    Properties
    {
             [HideInInspector] _Control0 ("Control0", 2D) = "red" {}
+      [HideInInspector] _Control1 ("Control1", 2D) = "black" {}
+      [HideInInspector] _Control2 ("Control2", 2D) = "black" {}
+      [HideInInspector] _Control3 ("Control3", 2D) = "black" {}
       
 
       // Splats
@@ -30,6 +33,7 @@ Shader "Terrain"
       // for Unity 2020.3 bug
       _MainTex("Unity Bug", 2D) = "white" {}
       [NoScaleOffset]_SmoothAO ("Smooth AO Array", 2DArray) = "black" {}
+      _HybridHeightBlendDistance("Hybrid Blend Distance", Float) = 300
 
       // terrain
       [NoScaleOffset]_DetailNoise("Detail Noise (Lum/Normal)", 2D) = "grey" {}
@@ -37,7 +41,6 @@ Shader "Terrain"
       // distance noise
       [NoScaleOffset]_DistanceNoise("Detail Noise (Lum/Normal)", 2D) = "grey" {}
       _DistanceNoiseScaleStrengthFade("Detail Scale", Vector) = (0.25, 0.5, 100, 250)
-      _NoiseHeight("Noise Texture", 2D) = "grey" {}
       _NoiseHeightData("Noise Height Data", Vector) = (1, 0.15, 0, 0)
       // distance resampling
       // uv scale, near, fast
@@ -59,7 +62,7 @@ Shader "Terrain"
    }
    SubShader
    {
-            Tags {"RenderType" = "Opaque" "Queue" = "Geometry+100" "IgnoreProjector" = "False"  "TerrainCompatible" = "true" "SplatCount" = "4"}
+            Tags {"RenderType" = "Opaque" "Queue" = "Geometry+100" "IgnoreProjector" = "False"  "TerrainCompatible" = "true" "SplatCount" = "16"}
 
       
       Pass
@@ -89,17 +92,16 @@ Shader "Terrain"
          
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
-      #define _DISABLEHEIGHTBLENDING 1
-      #define _NORMALIZEWEIGHTS 1
-      #define _NOMINDIELETRIC 1
+      #define _HYBRIDHEIGHTBLEND 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
-      #define _MAX4TEXTURES 1
+      #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
+      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
@@ -5927,17 +5929,16 @@ float3 GetTessFactors ()
          
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
-      #define _DISABLEHEIGHTBLENDING 1
-      #define _NORMALIZEWEIGHTS 1
-      #define _NOMINDIELETRIC 1
+      #define _HYBRIDHEIGHTBLEND 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
-      #define _MAX4TEXTURES 1
+      #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
+      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
@@ -11693,17 +11694,16 @@ float3 GetTessFactors ()
          
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
-      #define _DISABLEHEIGHTBLENDING 1
-      #define _NORMALIZEWEIGHTS 1
-      #define _NOMINDIELETRIC 1
+      #define _HYBRIDHEIGHTBLEND 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
-      #define _MAX4TEXTURES 1
+      #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
+      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
@@ -17547,17 +17547,16 @@ float3 GetTessFactors ()
          
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
-      #define _DISABLEHEIGHTBLENDING 1
-      #define _NORMALIZEWEIGHTS 1
-      #define _NOMINDIELETRIC 1
+      #define _HYBRIDHEIGHTBLEND 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
-      #define _MAX4TEXTURES 1
+      #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
+      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
@@ -23206,17 +23205,16 @@ float3 GetTessFactors ()
          
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
-      #define _DISABLEHEIGHTBLENDING 1
-      #define _NORMALIZEWEIGHTS 1
-      #define _NOMINDIELETRIC 1
+      #define _HYBRIDHEIGHTBLEND 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
-      #define _MAX4TEXTURES 1
+      #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
+      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
@@ -28878,7 +28876,7 @@ float3 GetTessFactors ()
       UsePass "Hidden/Nature/Terrain/Utilities/SELECTION"
 
    }
-   Dependency "BaseMapShader" =  "Hidden/Terrain_Base68924213"
-   Fallback "Hidden/Terrain_Base68924213"
+   Dependency "BaseMapShader" =  "Hidden/Terrain_Base-1518416461"
+   Fallback "Hidden/Terrain_Base-1518416461"
    CustomEditor "MicroSplatShaderGUI"
 }

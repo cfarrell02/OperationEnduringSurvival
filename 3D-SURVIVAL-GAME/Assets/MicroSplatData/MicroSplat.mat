@@ -20,10 +20,6 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _AntiTileArray:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _Control0:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -52,16 +48,8 @@ Material:
         m_Texture: {fileID: 2800000, guid: c3e57cb2426d34f64af1fc986aa89fcf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _EmissiveMetal:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NoiseHeight:
-        m_Texture: {fileID: 2800000, guid: fb84fc5f3e7e14ae7be5bd45efc3d3c4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalNoise:
@@ -85,15 +73,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PerTexProps:
-        m_Texture: {fileID: 251602395334693609, guid: 49097e92e4e74e84f90f19cf55828f57,
+        m_Texture: {fileID: -903592287292444425, guid: 49097e92e4e74e84f90f19cf55828f57,
           type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SmoothAO:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Specular:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -105,19 +89,15 @@ Material:
     m_Floats:
     - _Contrast: 0.4
     - _DistanceResampleAlbedoStrength: 1
-    - _DistanceResampleNormalStrength: 1.029
-    - _EmissiveMult: 1
+    - _DistanceResampleNormalStrength: 1
     - _HybridHeightBlendDistance: 300
     m_Colors:
-    - _AntiTileDetailNoiseScaleFadeStr: {r: 1286.06, g: 0, b: 652.95, a: 0}
-    - _AntiTileDistanceNoiseScaleFadeStr: {r: 0.1, g: 100, b: 150, a: 1}
-    - _AntiTileNormalNoiseScaleStr: {r: 200, g: 1.5, b: 0, a: 0}
-    - _DetailNoiseScaleStrengthFade: {r: -0.61, g: 1.69, b: 349.05, a: 0}
-    - _DistanceNoiseScaleStrengthFade: {r: 0.09, g: 1, b: 22.1, a: 483.8}
+    - _DetailNoiseScaleStrengthFade: {r: 0.77, g: 0.91, b: 53.05, a: 0}
+    - _DistanceNoiseScaleStrengthFade: {r: 0.7, g: 4.16, b: 94.7, a: 250}
     - _NoiseHeightData: {r: 1, g: 0.15, b: 0, a: 0}
-    - _NormalNoiseScaleStrength: {r: 200, g: 0.5, b: 0, a: 0}
-    - _NormalNoiseScaleStrength2: {r: 200, g: 0.5, b: 0, a: 0}
-    - _NormalNoiseScaleStrength3: {r: 200, g: 0.5, b: 0, a: 0}
-    - _ResampleDistanceParams: {r: 200, g: 804.7, b: 589.71, a: 0}
-    - _UVScale: {r: 250, g: 250, b: 100, a: 100}
+    - _NormalNoiseScaleStrength: {r: 350, g: 0.5, b: 0, a: 0}
+    - _NormalNoiseScaleStrength2: {r: 350, g: 0.5, b: 0, a: 0}
+    - _NormalNoiseScaleStrength3: {r: 350, g: 0.5, b: 0, a: 0}
+    - _ResampleDistanceParams: {r: 0.25, g: 180, b: 500, a: 0}
+    - _UVScale: {r: 350, g: 350, b: 0, a: 0}
   m_BuildTextureStacks: []
