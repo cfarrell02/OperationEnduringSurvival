@@ -37,12 +37,14 @@ Shader "Terrain"
       // distance noise
       [NoScaleOffset]_DistanceNoise("Detail Noise (Lum/Normal)", 2D) = "grey" {}
       _DistanceNoiseScaleStrengthFade("Detail Scale", Vector) = (0.25, 0.5, 100, 250)
+      _NoiseHeight("Noise Texture", 2D) = "grey" {}
       _NoiseHeightData("Noise Height Data", Vector) = (1, 0.15, 0, 0)
       // distance resampling
       // uv scale, near, fast
       _ResampleDistanceParams("ResampleDistanceParams", Vector) = (0.25, 180, 500, 0)
 
 
+     _DistanceResampleAlbedoStrength("Resampled Albedo Strength", Range(0.1, 1.0)) = 1
      _DistanceResampleNormalStrength("Resampled Normal Strength", Range(0.1, 1.3)) = 1
       // terrain
       [NoScaleOffset]_NormalNoise("Normal Noise", 2D) = "bump" {}
@@ -52,12 +54,6 @@ Shader "Terrain"
       _NormalNoiseScaleStrength2("Normal Scale 2", Vector) = (8, 0.5, 0, 0)
       [NoScaleOffset]_NormalNoise3("Normal Noise 3", 2D) = "bump" {}
       _NormalNoiseScaleStrength3("Normal Scale 3", Vector) = (8, 0.5, 0, 0)
-
-         [NoScaleOffset]_AntiTileArray ("AntiTile Array", 2DArray) = "white" {}
-         _AntiTileDetailNoiseScaleFadeStr ("AntiTile DetailScaleFadeStr", Vector) = (8, 5, 1.0, 0)
-         _AntiTileDistanceNoiseScaleFadeStr("AntiTile Detail Scale", Vector) = (0.1, 100, 150, 1.0)
-         _AntiTileNormalNoiseScaleStr("AntiTile Noise Normal", Vector) = (0.1, 1.0, 0, 0)
-
 
 
    }
@@ -104,16 +100,12 @@ Shader "Terrain"
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
-      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
-      #define _DISTANCERESAMPLENOALBEDO 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
-      #define _ANTITILEARRAYNORMAL 1
-      #define _ANTITILEARRAYDETAIL 1
       #define _MSRENDERLOOP_SURFACESHADER 1
 
 #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -1053,17 +1045,7 @@ Shader "Terrain"
 
 
       half _DistanceResampleNormalStrength;
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-         float4 _AntiTileArray_TexelSize;
-         half3 _AntiTileDetailNoiseScaleFadeStr;
-         half4 _AntiTileDistanceNoiseScaleFadeStr;
-         half2 _AntiTileNormalNoiseScaleStr;
-         #endif
-
-
-
-
+     half _DistanceResampleAlbedoStrength;
 
 
                
@@ -3612,200 +3594,6 @@ TEXTURE2D(_MainTex);
          }
          
         
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-            TEXTURE2D_ARRAY(_AntiTileArray);
-            SAMPLER(sampler_AntiTileArray);
-         #endif
-
-         #if _ANTITILETRIPLANAR
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) (SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv0.xy * scale), uv.z, dx * scale, dy * scale) * tc.pn.x + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv1 * scale), uv.z, dx * scale, dy * scale) * tc.pn.y + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv2 * scale), uv.z, dx * scale, dy * scale) * tc.pn.z)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE COUNTSAMPLE COUNTSAMPLE
-         #else
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(uv.xy * scale), uv.z, dx * scale, dy * scale)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE
-         #endif
-
-         void ApplyAntiTilePerTex(inout RawSamples o, Config config, float camDist, float3 worldPos, float3 worldNormalVertex, half4 weights)
-         {
-            #if _ANTITILEPERTEX
-               SAMPLE_PER_TEX(strs, 14.5, config, half4(1.0, 1.0, 1.0, 1.0));
-            #else
-               half4 strs0 = half4(1,1,1,1);
-               half4 strs1 = half4(1,1,1,1);
-               half4 strs2 = half4(1,1,1,1);
-               half4 strs3 = half4(1,1,1,1);
-            #endif
-
-            AntiTileTriplanarConfig tc = (AntiTileTriplanarConfig)0;
-            UNITY_INITIALIZE_OUTPUT(AntiTileTriplanarConfig,tc);
-
-            float2 suv = config.uv * _UVScale.xy;
-            #if _WORLDUV
-            suv = worldPos.xz;
-            #endif
-
-            float2 suvdx = ddx(suv);
-            float2 suvdy = ddy(suv);
-            
-            #if _ANTITILETRIPLANAR
-                PrepAntiTileTriplanarConfig(tc, worldPos, worldNormalVertex);
-                #if _TRIPLANAR
-                   tc.uv0.xy *= _TriplanarUVScale.xy;
-                   tc.uv1.xy *= _TriplanarUVScale.xy;
-                   tc.uv2.xy *= _TriplanarUVScale.xy;
-                #endif
-            #endif
-            
-
-            #if _ANTITILETRIPLANAR
-               suvdx = ddx(config.uv0.xy);
-               suvdy = ddy(config.uv0.xy);
-            #endif
-
-
-            #if _ANTITILEARRAYDETAIL
-            {
-               MSBRANCHOTHER(_AntiTileDetailNoiseScaleFadeStr.y - camDist)
-               {
-                  float2 uv = suv;
-                  half fade = 1.0 - ((_AntiTileDetailNoiseScaleFadeStr.y - camDist) / _AntiTileDetailNoiseScaleFadeStr.y);
-                  fade = 1.0 - (fade*fade);
-                  fade *= _AntiTileDetailNoiseScaleFadeStr.z;
-                  
-                  half noise0 = 0.5;
-                  half noise1 = 0.5;
-                  half noise2 = 0.5;
-                  half noise3 = 0.5;
-
-                  noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.y);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.y);
-                  }
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.y);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                      MSBRANCHOTHER(weights.w)
-                      {
-                         noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                         ANTITILECOUNTSAMPLE
-                         o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.y);
-                      }
-                  #endif
-
-               }
-            }
-            #endif
-            #if _ANTITILEARRAYDISTANCE
-            {
-               MSBRANCHOTHER(camDist - _AntiTileDetailNoiseScaleFadeStr.y)
-               {
-                  float2 uv = suv;
-                  float fade = saturate ((camDist - _AntiTileDistanceNoiseScaleFadeStr.y) / _AntiTileDistanceNoiseScaleFadeStr.z);
-                  fade *= _AntiTileDistanceNoiseScaleFadeStr.w;
-                  
-                  half noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.z);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     half noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.z);
-                  }
-
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        half noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.z);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                     MSBRANCHOTHER(weights.w)
-                     {
-                        half noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.z);
-                     }
-                  #endif
-                  
-               }
-            }
-            #endif
-
-
-            #if _ANTITILEARRAYNORMAL
-            {
-               float2 uv = suv;
-               float scale = _AntiTileNormalNoiseScaleStr.x;
-
-               half2 noise0 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, scale, suvdx, suvdy));
-               ANTITILECOUNTSAMPLE
-               #if _SURFACENORMALS
-                  o.surf0 += ConvertNormal2ToGradient(noise0) * _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #else
-                  o.normSAO0.xy = lerp(o.normSAO0.xy, BlendNormal2(o.normSAO0.xy, noise0.xy), _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #endif
-
-               MSBRANCHOTHER(weights.y)
-               {
-                  half2 noise1 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, scale, suvdx, suvdy));
-                  ANTITILECOUNTSAMPLE
-                  #if _SURFACENORMALS
-                     o.surf1 += ConvertNormal2ToGradient(noise1) * _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #else
-                     o.normSAO1.xy = lerp(o.normSAO1.xy, BlendNormal2(o.normSAO1.xy, noise1.xy), _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #endif
-               }
-
-               #if !_MAX2LAYER
-                  MSBRANCHOTHER(weights.z)
-                  {
-                     half2 noise2 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     #if _SURFACENORMALS
-                        o.surf2 += ConvertNormal2ToGradient(noise2) * _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #else
-                        o.normSAO2.xy = lerp(o.normSAO2.xy, BlendNormal2(o.normSAO2.xy, noise2.xy), _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #endif
-                  }
-               #endif
-               #if !_MAX2LAYER && !_MAX3LAYER
-                  MSBRANCHOTHER(weights.w)
-                  {
-                     half2 noise3 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     
-                     #if _SURFACENORMALS
-                        o.surf3 += ConvertNormal2ToGradient(noise3) * _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #else
-                        o.normSAO3.xy = lerp(o.normSAO3.xy, BlendNormal2(o.normSAO3.xy, noise3.xy), _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #endif
-                  }
-               #endif
-               
-            }
-            #endif
-
-
-         }
-
-
 
 
       void SampleAlbedo(inout Config config, inout TriplanarConfig tc, inout RawSamples s, MIPFORMAT mipLevel, half4 weights)
@@ -6150,16 +5938,12 @@ float3 GetTessFactors ()
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
-      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
-      #define _DISTANCERESAMPLENOALBEDO 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
-      #define _ANTITILEARRAYNORMAL 1
-      #define _ANTITILEARRAYDETAIL 1
       #define _MSRENDERLOOP_SURFACESHADER 1
 
 #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -7091,17 +6875,7 @@ float3 GetTessFactors ()
 
 
       half _DistanceResampleNormalStrength;
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-         float4 _AntiTileArray_TexelSize;
-         half3 _AntiTileDetailNoiseScaleFadeStr;
-         half4 _AntiTileDistanceNoiseScaleFadeStr;
-         half2 _AntiTileNormalNoiseScaleStr;
-         #endif
-
-
-
-
+     half _DistanceResampleAlbedoStrength;
 
 
                
@@ -9650,200 +9424,6 @@ TEXTURE2D(_MainTex);
          }
          
         
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-            TEXTURE2D_ARRAY(_AntiTileArray);
-            SAMPLER(sampler_AntiTileArray);
-         #endif
-
-         #if _ANTITILETRIPLANAR
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) (SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv0.xy * scale), uv.z, dx * scale, dy * scale) * tc.pn.x + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv1 * scale), uv.z, dx * scale, dy * scale) * tc.pn.y + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv2 * scale), uv.z, dx * scale, dy * scale) * tc.pn.z)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE COUNTSAMPLE COUNTSAMPLE
-         #else
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(uv.xy * scale), uv.z, dx * scale, dy * scale)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE
-         #endif
-
-         void ApplyAntiTilePerTex(inout RawSamples o, Config config, float camDist, float3 worldPos, float3 worldNormalVertex, half4 weights)
-         {
-            #if _ANTITILEPERTEX
-               SAMPLE_PER_TEX(strs, 14.5, config, half4(1.0, 1.0, 1.0, 1.0));
-            #else
-               half4 strs0 = half4(1,1,1,1);
-               half4 strs1 = half4(1,1,1,1);
-               half4 strs2 = half4(1,1,1,1);
-               half4 strs3 = half4(1,1,1,1);
-            #endif
-
-            AntiTileTriplanarConfig tc = (AntiTileTriplanarConfig)0;
-            UNITY_INITIALIZE_OUTPUT(AntiTileTriplanarConfig,tc);
-
-            float2 suv = config.uv * _UVScale.xy;
-            #if _WORLDUV
-            suv = worldPos.xz;
-            #endif
-
-            float2 suvdx = ddx(suv);
-            float2 suvdy = ddy(suv);
-            
-            #if _ANTITILETRIPLANAR
-                PrepAntiTileTriplanarConfig(tc, worldPos, worldNormalVertex);
-                #if _TRIPLANAR
-                   tc.uv0.xy *= _TriplanarUVScale.xy;
-                   tc.uv1.xy *= _TriplanarUVScale.xy;
-                   tc.uv2.xy *= _TriplanarUVScale.xy;
-                #endif
-            #endif
-            
-
-            #if _ANTITILETRIPLANAR
-               suvdx = ddx(config.uv0.xy);
-               suvdy = ddy(config.uv0.xy);
-            #endif
-
-
-            #if _ANTITILEARRAYDETAIL
-            {
-               MSBRANCHOTHER(_AntiTileDetailNoiseScaleFadeStr.y - camDist)
-               {
-                  float2 uv = suv;
-                  half fade = 1.0 - ((_AntiTileDetailNoiseScaleFadeStr.y - camDist) / _AntiTileDetailNoiseScaleFadeStr.y);
-                  fade = 1.0 - (fade*fade);
-                  fade *= _AntiTileDetailNoiseScaleFadeStr.z;
-                  
-                  half noise0 = 0.5;
-                  half noise1 = 0.5;
-                  half noise2 = 0.5;
-                  half noise3 = 0.5;
-
-                  noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.y);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.y);
-                  }
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.y);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                      MSBRANCHOTHER(weights.w)
-                      {
-                         noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                         ANTITILECOUNTSAMPLE
-                         o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.y);
-                      }
-                  #endif
-
-               }
-            }
-            #endif
-            #if _ANTITILEARRAYDISTANCE
-            {
-               MSBRANCHOTHER(camDist - _AntiTileDetailNoiseScaleFadeStr.y)
-               {
-                  float2 uv = suv;
-                  float fade = saturate ((camDist - _AntiTileDistanceNoiseScaleFadeStr.y) / _AntiTileDistanceNoiseScaleFadeStr.z);
-                  fade *= _AntiTileDistanceNoiseScaleFadeStr.w;
-                  
-                  half noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.z);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     half noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.z);
-                  }
-
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        half noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.z);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                     MSBRANCHOTHER(weights.w)
-                     {
-                        half noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.z);
-                     }
-                  #endif
-                  
-               }
-            }
-            #endif
-
-
-            #if _ANTITILEARRAYNORMAL
-            {
-               float2 uv = suv;
-               float scale = _AntiTileNormalNoiseScaleStr.x;
-
-               half2 noise0 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, scale, suvdx, suvdy));
-               ANTITILECOUNTSAMPLE
-               #if _SURFACENORMALS
-                  o.surf0 += ConvertNormal2ToGradient(noise0) * _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #else
-                  o.normSAO0.xy = lerp(o.normSAO0.xy, BlendNormal2(o.normSAO0.xy, noise0.xy), _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #endif
-
-               MSBRANCHOTHER(weights.y)
-               {
-                  half2 noise1 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, scale, suvdx, suvdy));
-                  ANTITILECOUNTSAMPLE
-                  #if _SURFACENORMALS
-                     o.surf1 += ConvertNormal2ToGradient(noise1) * _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #else
-                     o.normSAO1.xy = lerp(o.normSAO1.xy, BlendNormal2(o.normSAO1.xy, noise1.xy), _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #endif
-               }
-
-               #if !_MAX2LAYER
-                  MSBRANCHOTHER(weights.z)
-                  {
-                     half2 noise2 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     #if _SURFACENORMALS
-                        o.surf2 += ConvertNormal2ToGradient(noise2) * _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #else
-                        o.normSAO2.xy = lerp(o.normSAO2.xy, BlendNormal2(o.normSAO2.xy, noise2.xy), _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #endif
-                  }
-               #endif
-               #if !_MAX2LAYER && !_MAX3LAYER
-                  MSBRANCHOTHER(weights.w)
-                  {
-                     half2 noise3 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     
-                     #if _SURFACENORMALS
-                        o.surf3 += ConvertNormal2ToGradient(noise3) * _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #else
-                        o.normSAO3.xy = lerp(o.normSAO3.xy, BlendNormal2(o.normSAO3.xy, noise3.xy), _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #endif
-                  }
-               #endif
-               
-            }
-            #endif
-
-
-         }
-
-
 
 
       void SampleAlbedo(inout Config config, inout TriplanarConfig tc, inout RawSamples s, MIPFORMAT mipLevel, half4 weights)
@@ -12124,16 +11704,12 @@ float3 GetTessFactors ()
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
-      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
-      #define _DISTANCERESAMPLENOALBEDO 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
-      #define _ANTITILEARRAYNORMAL 1
-      #define _ANTITILEARRAYDETAIL 1
       #define _MSRENDERLOOP_SURFACESHADER 1
 
 #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -13071,17 +12647,7 @@ float3 GetTessFactors ()
 
 
       half _DistanceResampleNormalStrength;
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-         float4 _AntiTileArray_TexelSize;
-         half3 _AntiTileDetailNoiseScaleFadeStr;
-         half4 _AntiTileDistanceNoiseScaleFadeStr;
-         half2 _AntiTileNormalNoiseScaleStr;
-         #endif
-
-
-
-
+     half _DistanceResampleAlbedoStrength;
 
 
                
@@ -15630,200 +15196,6 @@ TEXTURE2D(_MainTex);
          }
          
         
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-            TEXTURE2D_ARRAY(_AntiTileArray);
-            SAMPLER(sampler_AntiTileArray);
-         #endif
-
-         #if _ANTITILETRIPLANAR
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) (SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv0.xy * scale), uv.z, dx * scale, dy * scale) * tc.pn.x + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv1 * scale), uv.z, dx * scale, dy * scale) * tc.pn.y + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv2 * scale), uv.z, dx * scale, dy * scale) * tc.pn.z)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE COUNTSAMPLE COUNTSAMPLE
-         #else
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(uv.xy * scale), uv.z, dx * scale, dy * scale)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE
-         #endif
-
-         void ApplyAntiTilePerTex(inout RawSamples o, Config config, float camDist, float3 worldPos, float3 worldNormalVertex, half4 weights)
-         {
-            #if _ANTITILEPERTEX
-               SAMPLE_PER_TEX(strs, 14.5, config, half4(1.0, 1.0, 1.0, 1.0));
-            #else
-               half4 strs0 = half4(1,1,1,1);
-               half4 strs1 = half4(1,1,1,1);
-               half4 strs2 = half4(1,1,1,1);
-               half4 strs3 = half4(1,1,1,1);
-            #endif
-
-            AntiTileTriplanarConfig tc = (AntiTileTriplanarConfig)0;
-            UNITY_INITIALIZE_OUTPUT(AntiTileTriplanarConfig,tc);
-
-            float2 suv = config.uv * _UVScale.xy;
-            #if _WORLDUV
-            suv = worldPos.xz;
-            #endif
-
-            float2 suvdx = ddx(suv);
-            float2 suvdy = ddy(suv);
-            
-            #if _ANTITILETRIPLANAR
-                PrepAntiTileTriplanarConfig(tc, worldPos, worldNormalVertex);
-                #if _TRIPLANAR
-                   tc.uv0.xy *= _TriplanarUVScale.xy;
-                   tc.uv1.xy *= _TriplanarUVScale.xy;
-                   tc.uv2.xy *= _TriplanarUVScale.xy;
-                #endif
-            #endif
-            
-
-            #if _ANTITILETRIPLANAR
-               suvdx = ddx(config.uv0.xy);
-               suvdy = ddy(config.uv0.xy);
-            #endif
-
-
-            #if _ANTITILEARRAYDETAIL
-            {
-               MSBRANCHOTHER(_AntiTileDetailNoiseScaleFadeStr.y - camDist)
-               {
-                  float2 uv = suv;
-                  half fade = 1.0 - ((_AntiTileDetailNoiseScaleFadeStr.y - camDist) / _AntiTileDetailNoiseScaleFadeStr.y);
-                  fade = 1.0 - (fade*fade);
-                  fade *= _AntiTileDetailNoiseScaleFadeStr.z;
-                  
-                  half noise0 = 0.5;
-                  half noise1 = 0.5;
-                  half noise2 = 0.5;
-                  half noise3 = 0.5;
-
-                  noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.y);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.y);
-                  }
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.y);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                      MSBRANCHOTHER(weights.w)
-                      {
-                         noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                         ANTITILECOUNTSAMPLE
-                         o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.y);
-                      }
-                  #endif
-
-               }
-            }
-            #endif
-            #if _ANTITILEARRAYDISTANCE
-            {
-               MSBRANCHOTHER(camDist - _AntiTileDetailNoiseScaleFadeStr.y)
-               {
-                  float2 uv = suv;
-                  float fade = saturate ((camDist - _AntiTileDistanceNoiseScaleFadeStr.y) / _AntiTileDistanceNoiseScaleFadeStr.z);
-                  fade *= _AntiTileDistanceNoiseScaleFadeStr.w;
-                  
-                  half noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.z);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     half noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.z);
-                  }
-
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        half noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.z);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                     MSBRANCHOTHER(weights.w)
-                     {
-                        half noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.z);
-                     }
-                  #endif
-                  
-               }
-            }
-            #endif
-
-
-            #if _ANTITILEARRAYNORMAL
-            {
-               float2 uv = suv;
-               float scale = _AntiTileNormalNoiseScaleStr.x;
-
-               half2 noise0 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, scale, suvdx, suvdy));
-               ANTITILECOUNTSAMPLE
-               #if _SURFACENORMALS
-                  o.surf0 += ConvertNormal2ToGradient(noise0) * _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #else
-                  o.normSAO0.xy = lerp(o.normSAO0.xy, BlendNormal2(o.normSAO0.xy, noise0.xy), _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #endif
-
-               MSBRANCHOTHER(weights.y)
-               {
-                  half2 noise1 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, scale, suvdx, suvdy));
-                  ANTITILECOUNTSAMPLE
-                  #if _SURFACENORMALS
-                     o.surf1 += ConvertNormal2ToGradient(noise1) * _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #else
-                     o.normSAO1.xy = lerp(o.normSAO1.xy, BlendNormal2(o.normSAO1.xy, noise1.xy), _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #endif
-               }
-
-               #if !_MAX2LAYER
-                  MSBRANCHOTHER(weights.z)
-                  {
-                     half2 noise2 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     #if _SURFACENORMALS
-                        o.surf2 += ConvertNormal2ToGradient(noise2) * _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #else
-                        o.normSAO2.xy = lerp(o.normSAO2.xy, BlendNormal2(o.normSAO2.xy, noise2.xy), _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #endif
-                  }
-               #endif
-               #if !_MAX2LAYER && !_MAX3LAYER
-                  MSBRANCHOTHER(weights.w)
-                  {
-                     half2 noise3 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     
-                     #if _SURFACENORMALS
-                        o.surf3 += ConvertNormal2ToGradient(noise3) * _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #else
-                        o.normSAO3.xy = lerp(o.normSAO3.xy, BlendNormal2(o.normSAO3.xy, noise3.xy), _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #endif
-                  }
-               #endif
-               
-            }
-            #endif
-
-
-         }
-
-
 
 
       void SampleAlbedo(inout Config config, inout TriplanarConfig tc, inout RawSamples s, MIPFORMAT mipLevel, half4 weights)
@@ -18186,16 +17558,12 @@ float3 GetTessFactors ()
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
-      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
-      #define _DISTANCERESAMPLENOALBEDO 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
-      #define _ANTITILEARRAYNORMAL 1
-      #define _ANTITILEARRAYDETAIL 1
       #define _MSRENDERLOOP_SURFACESHADER 1
 
 #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -19108,17 +18476,7 @@ float3 GetTessFactors ()
 
 
       half _DistanceResampleNormalStrength;
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-         float4 _AntiTileArray_TexelSize;
-         half3 _AntiTileDetailNoiseScaleFadeStr;
-         half4 _AntiTileDistanceNoiseScaleFadeStr;
-         half2 _AntiTileNormalNoiseScaleStr;
-         #endif
-
-
-
-
+     half _DistanceResampleAlbedoStrength;
 
 
                
@@ -21667,200 +21025,6 @@ TEXTURE2D(_MainTex);
          }
          
         
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-            TEXTURE2D_ARRAY(_AntiTileArray);
-            SAMPLER(sampler_AntiTileArray);
-         #endif
-
-         #if _ANTITILETRIPLANAR
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) (SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv0.xy * scale), uv.z, dx * scale, dy * scale) * tc.pn.x + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv1 * scale), uv.z, dx * scale, dy * scale) * tc.pn.y + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv2 * scale), uv.z, dx * scale, dy * scale) * tc.pn.z)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE COUNTSAMPLE COUNTSAMPLE
-         #else
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(uv.xy * scale), uv.z, dx * scale, dy * scale)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE
-         #endif
-
-         void ApplyAntiTilePerTex(inout RawSamples o, Config config, float camDist, float3 worldPos, float3 worldNormalVertex, half4 weights)
-         {
-            #if _ANTITILEPERTEX
-               SAMPLE_PER_TEX(strs, 14.5, config, half4(1.0, 1.0, 1.0, 1.0));
-            #else
-               half4 strs0 = half4(1,1,1,1);
-               half4 strs1 = half4(1,1,1,1);
-               half4 strs2 = half4(1,1,1,1);
-               half4 strs3 = half4(1,1,1,1);
-            #endif
-
-            AntiTileTriplanarConfig tc = (AntiTileTriplanarConfig)0;
-            UNITY_INITIALIZE_OUTPUT(AntiTileTriplanarConfig,tc);
-
-            float2 suv = config.uv * _UVScale.xy;
-            #if _WORLDUV
-            suv = worldPos.xz;
-            #endif
-
-            float2 suvdx = ddx(suv);
-            float2 suvdy = ddy(suv);
-            
-            #if _ANTITILETRIPLANAR
-                PrepAntiTileTriplanarConfig(tc, worldPos, worldNormalVertex);
-                #if _TRIPLANAR
-                   tc.uv0.xy *= _TriplanarUVScale.xy;
-                   tc.uv1.xy *= _TriplanarUVScale.xy;
-                   tc.uv2.xy *= _TriplanarUVScale.xy;
-                #endif
-            #endif
-            
-
-            #if _ANTITILETRIPLANAR
-               suvdx = ddx(config.uv0.xy);
-               suvdy = ddy(config.uv0.xy);
-            #endif
-
-
-            #if _ANTITILEARRAYDETAIL
-            {
-               MSBRANCHOTHER(_AntiTileDetailNoiseScaleFadeStr.y - camDist)
-               {
-                  float2 uv = suv;
-                  half fade = 1.0 - ((_AntiTileDetailNoiseScaleFadeStr.y - camDist) / _AntiTileDetailNoiseScaleFadeStr.y);
-                  fade = 1.0 - (fade*fade);
-                  fade *= _AntiTileDetailNoiseScaleFadeStr.z;
-                  
-                  half noise0 = 0.5;
-                  half noise1 = 0.5;
-                  half noise2 = 0.5;
-                  half noise3 = 0.5;
-
-                  noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.y);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.y);
-                  }
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.y);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                      MSBRANCHOTHER(weights.w)
-                      {
-                         noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                         ANTITILECOUNTSAMPLE
-                         o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.y);
-                      }
-                  #endif
-
-               }
-            }
-            #endif
-            #if _ANTITILEARRAYDISTANCE
-            {
-               MSBRANCHOTHER(camDist - _AntiTileDetailNoiseScaleFadeStr.y)
-               {
-                  float2 uv = suv;
-                  float fade = saturate ((camDist - _AntiTileDistanceNoiseScaleFadeStr.y) / _AntiTileDistanceNoiseScaleFadeStr.z);
-                  fade *= _AntiTileDistanceNoiseScaleFadeStr.w;
-                  
-                  half noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.z);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     half noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.z);
-                  }
-
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        half noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.z);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                     MSBRANCHOTHER(weights.w)
-                     {
-                        half noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.z);
-                     }
-                  #endif
-                  
-               }
-            }
-            #endif
-
-
-            #if _ANTITILEARRAYNORMAL
-            {
-               float2 uv = suv;
-               float scale = _AntiTileNormalNoiseScaleStr.x;
-
-               half2 noise0 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, scale, suvdx, suvdy));
-               ANTITILECOUNTSAMPLE
-               #if _SURFACENORMALS
-                  o.surf0 += ConvertNormal2ToGradient(noise0) * _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #else
-                  o.normSAO0.xy = lerp(o.normSAO0.xy, BlendNormal2(o.normSAO0.xy, noise0.xy), _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #endif
-
-               MSBRANCHOTHER(weights.y)
-               {
-                  half2 noise1 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, scale, suvdx, suvdy));
-                  ANTITILECOUNTSAMPLE
-                  #if _SURFACENORMALS
-                     o.surf1 += ConvertNormal2ToGradient(noise1) * _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #else
-                     o.normSAO1.xy = lerp(o.normSAO1.xy, BlendNormal2(o.normSAO1.xy, noise1.xy), _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #endif
-               }
-
-               #if !_MAX2LAYER
-                  MSBRANCHOTHER(weights.z)
-                  {
-                     half2 noise2 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     #if _SURFACENORMALS
-                        o.surf2 += ConvertNormal2ToGradient(noise2) * _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #else
-                        o.normSAO2.xy = lerp(o.normSAO2.xy, BlendNormal2(o.normSAO2.xy, noise2.xy), _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #endif
-                  }
-               #endif
-               #if !_MAX2LAYER && !_MAX3LAYER
-                  MSBRANCHOTHER(weights.w)
-                  {
-                     half2 noise3 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     
-                     #if _SURFACENORMALS
-                        o.surf3 += ConvertNormal2ToGradient(noise3) * _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #else
-                        o.normSAO3.xy = lerp(o.normSAO3.xy, BlendNormal2(o.normSAO3.xy, noise3.xy), _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #endif
-                  }
-               #endif
-               
-            }
-            #endif
-
-
-         }
-
-
 
 
       void SampleAlbedo(inout Config config, inout TriplanarConfig tc, inout RawSamples s, MIPFORMAT mipLevel, half4 weights)
@@ -24053,16 +23217,12 @@ float3 GetTessFactors ()
       #define _DETAILNOISE 1
       #define _DISTANCENOISE 1
       #define _NOISEHEIGHT 1
-      #define _NOISEHEIGHTFBM 1
       #define _DISTANCERESAMPLE 1
       #define _DISTANCERESAMPLENORMAL 1
-      #define _DISTANCERESAMPLENOALBEDO 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
-      #define _ANTITILEARRAYNORMAL 1
-      #define _ANTITILEARRAYDETAIL 1
       #define _MSRENDERLOOP_SURFACESHADER 1
 
 #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -24992,17 +24152,7 @@ float3 GetTessFactors ()
 
 
       half _DistanceResampleNormalStrength;
-
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-         float4 _AntiTileArray_TexelSize;
-         half3 _AntiTileDetailNoiseScaleFadeStr;
-         half4 _AntiTileDistanceNoiseScaleFadeStr;
-         half2 _AntiTileNormalNoiseScaleStr;
-         #endif
-
-
-
-
+     half _DistanceResampleAlbedoStrength;
 
 
                
@@ -27552,200 +26702,6 @@ TEXTURE2D(_MainTex);
          
         
 
-         #if _ANTITILEARRAYNORMAL || _ANTITILEARRAYDISTANCE || _ANTITILEARRAYDETAIL
-            TEXTURE2D_ARRAY(_AntiTileArray);
-            SAMPLER(sampler_AntiTileArray);
-         #endif
-
-         #if _ANTITILETRIPLANAR
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) (SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv0.xy * scale), uv.z, dx * scale, dy * scale) * tc.pn.x + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv1 * scale), uv.z, dx * scale, dy * scale) * tc.pn.y + SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(tc.uv2 * scale), uv.z, dx * scale, dy * scale) * tc.pn.z)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE COUNTSAMPLE COUNTSAMPLE
-         #else
-            #define AntiTileArrayTriplanarSample(tex, uv, tc, scale, dx, dy) SAMPLE_TEXTURE2D_ARRAY_GRAD(tex, sampler##tex, float2(uv.xy * scale), uv.z, dx * scale, dy * scale)
-            #define ANTITILECOUNTSAMPLE COUNTSAMPLE
-         #endif
-
-         void ApplyAntiTilePerTex(inout RawSamples o, Config config, float camDist, float3 worldPos, float3 worldNormalVertex, half4 weights)
-         {
-            #if _ANTITILEPERTEX
-               SAMPLE_PER_TEX(strs, 14.5, config, half4(1.0, 1.0, 1.0, 1.0));
-            #else
-               half4 strs0 = half4(1,1,1,1);
-               half4 strs1 = half4(1,1,1,1);
-               half4 strs2 = half4(1,1,1,1);
-               half4 strs3 = half4(1,1,1,1);
-            #endif
-
-            AntiTileTriplanarConfig tc = (AntiTileTriplanarConfig)0;
-            UNITY_INITIALIZE_OUTPUT(AntiTileTriplanarConfig,tc);
-
-            float2 suv = config.uv * _UVScale.xy;
-            #if _WORLDUV
-            suv = worldPos.xz;
-            #endif
-
-            float2 suvdx = ddx(suv);
-            float2 suvdy = ddy(suv);
-            
-            #if _ANTITILETRIPLANAR
-                PrepAntiTileTriplanarConfig(tc, worldPos, worldNormalVertex);
-                #if _TRIPLANAR
-                   tc.uv0.xy *= _TriplanarUVScale.xy;
-                   tc.uv1.xy *= _TriplanarUVScale.xy;
-                   tc.uv2.xy *= _TriplanarUVScale.xy;
-                #endif
-            #endif
-            
-
-            #if _ANTITILETRIPLANAR
-               suvdx = ddx(config.uv0.xy);
-               suvdy = ddy(config.uv0.xy);
-            #endif
-
-
-            #if _ANTITILEARRAYDETAIL
-            {
-               MSBRANCHOTHER(_AntiTileDetailNoiseScaleFadeStr.y - camDist)
-               {
-                  float2 uv = suv;
-                  half fade = 1.0 - ((_AntiTileDetailNoiseScaleFadeStr.y - camDist) / _AntiTileDetailNoiseScaleFadeStr.y);
-                  fade = 1.0 - (fade*fade);
-                  fade *= _AntiTileDetailNoiseScaleFadeStr.z;
-                  
-                  half noise0 = 0.5;
-                  half noise1 = 0.5;
-                  half noise2 = 0.5;
-                  half noise3 = 0.5;
-
-                  noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.y);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.y);
-                  }
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.y);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                      MSBRANCHOTHER(weights.w)
-                      {
-                         noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDetailNoiseScaleFadeStr.x, suvdx, suvdy).r;
-                         ANTITILECOUNTSAMPLE
-                         o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.y);
-                      }
-                  #endif
-
-               }
-            }
-            #endif
-            #if _ANTITILEARRAYDISTANCE
-            {
-               MSBRANCHOTHER(camDist - _AntiTileDetailNoiseScaleFadeStr.y)
-               {
-                  float2 uv = suv;
-                  float fade = saturate ((camDist - _AntiTileDistanceNoiseScaleFadeStr.y) / _AntiTileDistanceNoiseScaleFadeStr.z);
-                  fade *= _AntiTileDistanceNoiseScaleFadeStr.w;
-                  
-                  half noise0 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                  ANTITILECOUNTSAMPLE
-                  o.albedo0.rgb = lerp(o.albedo0.rgb, BlendMult2X(o.albedo0.rgb, noise0.xxx), fade * strs0.z);
-
-                  MSBRANCHOTHER(weights.y)
-                  {
-                     half noise1 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                     ANTITILECOUNTSAMPLE
-                     o.albedo1.rgb = lerp(o.albedo1.rgb, BlendMult2X(o.albedo1.rgb, noise1.xxx), fade * strs1.z);
-                  }
-
-                  #if !_MAX2LAYER
-                     MSBRANCHOTHER(weights.z)
-                     {
-                        half noise2 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo2.rgb = lerp(o.albedo2.rgb, BlendMult2X(o.albedo2.rgb, noise2.xxx), fade * strs2.z);
-                     }
-                  #endif
-                  #if !_MAX2LAYER && !_MAX3LAYER
-                     MSBRANCHOTHER(weights.w)
-                     {
-                        half noise3 = AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, _AntiTileDistanceNoiseScaleFadeStr.x, suvdx, suvdy).b;
-                        ANTITILECOUNTSAMPLE
-                        o.albedo3.rgb = lerp(o.albedo3.rgb, BlendMult2X(o.albedo3.rgb, noise3.xxx), fade * strs3.z);
-                     }
-                  #endif
-                  
-               }
-            }
-            #endif
-
-
-            #if _ANTITILEARRAYNORMAL
-            {
-               float2 uv = suv;
-               float scale = _AntiTileNormalNoiseScaleStr.x;
-
-               half2 noise0 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv0.z), tc, scale, suvdx, suvdy));
-               ANTITILECOUNTSAMPLE
-               #if _SURFACENORMALS
-                  o.surf0 += ConvertNormal2ToGradient(noise0) * _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #else
-                  o.normSAO0.xy = lerp(o.normSAO0.xy, BlendNormal2(o.normSAO0.xy, noise0.xy), _AntiTileNormalNoiseScaleStr.y * strs0.x);
-               #endif
-
-               MSBRANCHOTHER(weights.y)
-               {
-                  half2 noise1 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv1.z), tc, scale, suvdx, suvdy));
-                  ANTITILECOUNTSAMPLE
-                  #if _SURFACENORMALS
-                     o.surf1 += ConvertNormal2ToGradient(noise1) * _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #else
-                     o.normSAO1.xy = lerp(o.normSAO1.xy, BlendNormal2(o.normSAO1.xy, noise1.xy), _AntiTileNormalNoiseScaleStr.y * strs1.x);
-                  #endif
-               }
-
-               #if !_MAX2LAYER
-                  MSBRANCHOTHER(weights.z)
-                  {
-                     half2 noise2 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv2.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     #if _SURFACENORMALS
-                        o.surf2 += ConvertNormal2ToGradient(noise2) * _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #else
-                        o.normSAO2.xy = lerp(o.normSAO2.xy, BlendNormal2(o.normSAO2.xy, noise2.xy), _AntiTileNormalNoiseScaleStr.y * strs2.x);
-                     #endif
-                  }
-               #endif
-               #if !_MAX2LAYER && !_MAX3LAYER
-                  MSBRANCHOTHER(weights.w)
-                  {
-                     half2 noise3 = UnpackNormal2(AntiTileArrayTriplanarSample(_AntiTileArray, float3(uv, config.uv3.z), tc, scale, suvdx, suvdy));
-                     ANTITILECOUNTSAMPLE
-                     
-                     #if _SURFACENORMALS
-                        o.surf3 += ConvertNormal2ToGradient(noise3) * _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #else
-                        o.normSAO3.xy = lerp(o.normSAO3.xy, BlendNormal2(o.normSAO3.xy, noise3.xy), _AntiTileNormalNoiseScaleStr.y * strs3.x);
-                     #endif
-                  }
-               #endif
-               
-            }
-            #endif
-
-
-         }
-
-
-
 
       void SampleAlbedo(inout Config config, inout TriplanarConfig tc, inout RawSamples s, MIPFORMAT mipLevel, half4 weights)
       {
@@ -29922,7 +28878,7 @@ float3 GetTessFactors ()
       UsePass "Hidden/Nature/Terrain/Utilities/SELECTION"
 
    }
-   Dependency "BaseMapShader" =  "Hidden/Terrain_Base-733782227"
-   Fallback "Hidden/Terrain_Base-733782227"
+   Dependency "BaseMapShader" =  "Hidden/Terrain_Base68924213"
+   Fallback "Hidden/Terrain_Base68924213"
    CustomEditor "MicroSplatShaderGUI"
 }

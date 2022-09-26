@@ -104,19 +104,20 @@ Material:
     m_Ints: []
     m_Floats:
     - _Contrast: 0.4
+    - _DistanceResampleAlbedoStrength: 1
     - _DistanceResampleNormalStrength: 1.029
     - _EmissiveMult: 1
     - _HybridHeightBlendDistance: 300
     m_Colors:
     - _AntiTileDetailNoiseScaleFadeStr: {r: 1286.06, g: 0, b: 652.95, a: 0}
     - _AntiTileDistanceNoiseScaleFadeStr: {r: 0.1, g: 100, b: 150, a: 1}
-    - _AntiTileNormalNoiseScaleStr: {r: 8, g: 1.5, b: 0, a: 0}
-    - _DetailNoiseScaleStrengthFade: {r: 0.001, g: 0.5, b: 33.87, a: 0}
-    - _DistanceNoiseScaleStrengthFade: {r: 0.001, g: 0.54, b: 81.61, a: 1050.4}
+    - _AntiTileNormalNoiseScaleStr: {r: 200, g: 1.5, b: 0, a: 0}
+    - _DetailNoiseScaleStrengthFade: {r: -0.61, g: 1.69, b: 349.05, a: 0}
+    - _DistanceNoiseScaleStrengthFade: {r: 0.09, g: 1, b: 22.1, a: 483.8}
     - _NoiseHeightData: {r: 1, g: 0.15, b: 0, a: 0}
-    - _NormalNoiseScaleStrength: {r: 10.9, g: 0.5, b: 0, a: 0}
-    - _NormalNoiseScaleStrength2: {r: 4.21, g: 0.5, b: 0, a: 0}
-    - _NormalNoiseScaleStrength3: {r: 4.9, g: 0.5, b: 0, a: 0}
-    - _ResampleDistanceParams: {r: 38.87, g: 804.7, b: 511.3, a: 0}
-    - _UVScale: {r: 350, g: 350, b: 0, a: 0}
+    - _NormalNoiseScaleStrength: {r: 200, g: 0.5, b: 0, a: 0}
+    - _NormalNoiseScaleStrength2: {r: 200, g: 0.5, b: 0, a: 0}
+    - _NormalNoiseScaleStrength3: {r: 200, g: 0.5, b: 0, a: 0}
+    - _ResampleDistanceParams: {r: 200, g: 804.7, b: 589.71, a: 0}
+    - _UVScale: {r: 250, g: 250, b: 100, a: 100}
   m_BuildTextureStacks: []
