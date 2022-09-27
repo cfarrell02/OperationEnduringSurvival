@@ -93,8 +93,10 @@ Shader "Terrain"
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
       #define _HYBRIDHEIGHTBLEND 1
+      #define _SURFACENORMALS 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
+      #define _PERPIXNORMAL 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
@@ -106,6 +108,7 @@ Shader "Terrain"
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
+      #define _PERTEXNORMALNOISESTRENGTH 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
       #define _MSRENDERLOOP_SURFACESHADER 1
@@ -5930,8 +5933,10 @@ float3 GetTessFactors ()
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
       #define _HYBRIDHEIGHTBLEND 1
+      #define _SURFACENORMALS 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
+      #define _PERPIXNORMAL 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
@@ -5943,6 +5948,7 @@ float3 GetTessFactors ()
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
+      #define _PERTEXNORMALNOISESTRENGTH 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
       #define _MSRENDERLOOP_SURFACESHADER 1
@@ -11695,8 +11701,10 @@ float3 GetTessFactors ()
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
       #define _HYBRIDHEIGHTBLEND 1
+      #define _SURFACENORMALS 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
+      #define _PERPIXNORMAL 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
@@ -11708,6 +11716,7 @@ float3 GetTessFactors ()
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
+      #define _PERTEXNORMALNOISESTRENGTH 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
       #define _MSRENDERLOOP_SURFACESHADER 1
@@ -17548,8 +17557,10 @@ float3 GetTessFactors ()
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
       #define _HYBRIDHEIGHTBLEND 1
+      #define _SURFACENORMALS 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
+      #define _PERPIXNORMAL 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
@@ -17561,6 +17572,7 @@ float3 GetTessFactors ()
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
+      #define _PERTEXNORMALNOISESTRENGTH 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
       #define _MSRENDERLOOP_SURFACESHADER 1
@@ -23206,8 +23218,10 @@ float3 GetTessFactors ()
       #define _MICROSPLAT 1
       #define _MICROTERRAIN 1
       #define _HYBRIDHEIGHTBLEND 1
+      #define _SURFACENORMALS 1
       #define _USEGRADMIP 1
       #define _PACKINGHQ 1
+      #define _PERPIXNORMAL 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _BRANCHSAMPLES 1
       #define _BRANCHSAMPLESAGR 1
@@ -23219,6 +23233,7 @@ float3 GetTessFactors ()
       #define _DISTANCERESAMPLENORMAL 1
       #define _DISTANCERESAMPLEHEIGHTBLEND 1
       #define _NORMALNOISE 1
+      #define _PERTEXNORMALNOISESTRENGTH 1
       #define _NORMALNOISE2 1
       #define _NORMALNOISE3 1
       #define _MSRENDERLOOP_SURFACESHADER 1
@@ -28876,7 +28891,7 @@ float3 GetTessFactors ()
       UsePass "Hidden/Nature/Terrain/Utilities/SELECTION"
 
    }
-   Dependency "BaseMapShader" =  "Hidden/Terrain_Base-1518416461"
-   Fallback "Hidden/Terrain_Base-1518416461"
+   Dependency "BaseMapShader" =  "Hidden/Terrain_Base1894898299"
+   Fallback "Hidden/Terrain_Base1894898299"
    CustomEditor "MicroSplatShaderGUI"
 }

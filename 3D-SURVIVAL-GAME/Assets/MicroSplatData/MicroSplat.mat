@@ -48,6 +48,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: c3e57cb2426d34f64af1fc986aa89fcf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _EmissiveMetal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -81,6 +85,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Specular:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _TerrainHolesTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -90,10 +98,12 @@ Material:
     - _Contrast: 0.4
     - _DistanceResampleAlbedoStrength: 1
     - _DistanceResampleNormalStrength: 1
+    - _EmissiveMult: 1
     - _HybridHeightBlendDistance: 300
     m_Colors:
-    - _DetailNoiseScaleStrengthFade: {r: 0.77, g: 0.91, b: 53.05, a: 0}
-    - _DistanceNoiseScaleStrengthFade: {r: 0.7, g: 4.16, b: 94.7, a: 250}
+    - _DetailNoiseScaleStrengthFade: {r: 0.45, g: 1.09, b: 52.53, a: 0}
+    - _DistanceNoiseScaleStrengthFade: {r: 0.2, g: 0.59, b: 84, a: 250.27}
+    - _DistanceResampleNoiseParams: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _NoiseHeightData: {r: 1, g: 0.15, b: 0, a: 0}
     - _NormalNoiseScaleStrength: {r: 350, g: 0.5, b: 0, a: 0}
     - _NormalNoiseScaleStrength2: {r: 350, g: 0.5, b: 0, a: 0}
