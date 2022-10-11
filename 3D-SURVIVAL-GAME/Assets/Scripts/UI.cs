@@ -21,6 +21,6 @@ public class UI : MonoBehaviour
     {
         int currentLevel = SceneManager.GetActiveScene().buildIndex;
         print(currentLevel);
-        SceneManager.LoadScene(currentLevel);
+        SceneManager.LoadScene(currentLevel+1);
     }
 }
