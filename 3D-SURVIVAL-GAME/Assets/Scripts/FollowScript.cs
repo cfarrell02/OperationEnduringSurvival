@@ -6,13 +6,13 @@ namespace UnityStandardAssets.Utility
 {
     public class FollowScript: MonoBehaviour
     {
-        public Transform target;
-        public Vector3 offset = new Vector3(0f, 7.5f, 0f);
+        [SerializeField] GameObject target;
+        [SerializeField] private float speed = 1.5f;
 
 
-        private void LateUpdate()
+        void Update()
         {
-            transform.position = target.position + offset;
+            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
         }
     }
 }
