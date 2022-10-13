@@ -23,6 +23,7 @@ public class Ammunition : MonoBehaviour
         
         Transform gun = other.transform.Find("PlayerCameraRoot").Find("Main Camera").GetChild(0);
         GunMechanics gunMechanics = gun.GetComponent<GunMechanics>();
+        if (gunMechanics.ammo >= gunMechanics.maxAmmo) return;
         gunMechanics.ammo += ammunitionVal;
         gun.GetComponent<AudioSource>().PlayOneShot(ammoNoise,1f);
         Destroy(this.gameObject);

@@ -5,7 +5,8 @@ using TMPro;
 
 public class GunMechanics : MonoBehaviour
 {
-    public int ammo = 200,magazineCapacity = 20;
+    
+    public int maxAmmo = 200,ammo,magazineCapacity = 20;
     private int magazine;
     public float damage = 10f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
@@ -17,6 +18,7 @@ public class GunMechanics : MonoBehaviour
     void Start()
     {
         magazine = magazineCapacity;
+        ammo = maxAmmo;
         gun = GetComponent<Gun>();
     }
 
@@ -25,6 +27,7 @@ public class GunMechanics : MonoBehaviour
     {
         text.SetText("Magazine: " + magazine + "\n Reserve Ammo: " + ammo);
         if (gun.isReloading()) return;
+        if (ammo > maxAmmo) ammo = maxAmmo;
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire)
         {
             nextTimeToFire = Time.time + 1f / fireRate;
