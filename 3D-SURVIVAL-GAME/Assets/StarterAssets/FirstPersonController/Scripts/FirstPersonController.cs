@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 #endif
 
 namespace StarterAssets
@@ -64,7 +65,10 @@ namespace StarterAssets
 		// timeout deltatime
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
-
+		[SerializeField]private float sprintCoolDown;
+		[SerializeField] private float recoveryRate;
+		public GameObject sprintBar;
+		private float maxCooldown;
 	
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		private PlayerInput _playerInput;
@@ -98,6 +102,7 @@ namespace StarterAssets
 
 		private void Start()
 		{
+			maxCooldown = sprintCoolDown;
 			_controller = GetComponent<CharacterController>();
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -113,8 +118,12 @@ namespace StarterAssets
 
 		private void Update()
 		{
+            RectTransform rect = sprintBar.GetComponent<RectTransform>();
+            Image image = sprintBar.GetComponent<Image>();
+            float width = ((int)sprintCoolDown / maxCooldown) * Screen.width;
+            rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
 			JumpAndGravity();
-			GroundedCheck();
+            GroundedCheck();
 			Move();
 			Crouch();
 		}
@@ -169,16 +178,29 @@ namespace StarterAssets
 		private void Move()
 		{
 			// set target speed based on move speed, sprint speed and if sprint is pressed
-			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+			
+			float targetSpeed = _input.sprint && ((int)sprintCoolDown) > 0 ? SprintSpeed : MoveSpeed;
 
 			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
 			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
 			// if there is no input, set the target speed to 0
-			if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+			if (_input.move == Vector2.zero)
+			{
+				targetSpeed = 0.0f;
+			}
 
-			// a reference to the players current horizontal velocity
-			float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+            if (_input.sprint && sprintCoolDown >= 0)
+            {
+                sprintCoolDown -= recoveryRate;
+            }
+            else if (sprintCoolDown <= maxCooldown)
+            {
+                sprintCoolDown += recoveryRate;
+            }
+
+            // a reference to the players current horizontal velocity
+            float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
 			float speedOffset = 0.1f;
 			float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
@@ -211,6 +233,7 @@ namespace StarterAssets
 
 			// move the player
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
 		}
 
 		private void JumpAndGravity()
