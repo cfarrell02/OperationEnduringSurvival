@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Military Base.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Interior.unity
+    guid: c5d58c9677e2441dcb13925d1afe1f1c
   m_configObjects: {}
