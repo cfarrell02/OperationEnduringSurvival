@@ -29,10 +29,9 @@ public class NextLevel : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print(other.gameObject.name);
-        if (other.gameObject.name == "PlayerCapsule")
+
+        if (other.name == "PlayerCapsule")
         {
-            print("Loading nextlevel");
             StartCoroutine(LoadNextLevel(4));
         }
     }
