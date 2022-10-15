@@ -20,7 +20,7 @@ public class Ammunition : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.name != "PlayerCapsule") return;
         Transform gun = other.transform.Find("PlayerCameraRoot").Find("Main Camera").GetChild(0);
         GunMechanics gunMechanics = gun.GetComponent<GunMechanics>();
         if (gunMechanics.ammo >= gunMechanics.maxAmmo) return;

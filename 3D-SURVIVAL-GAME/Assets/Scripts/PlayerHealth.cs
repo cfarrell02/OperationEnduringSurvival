@@ -53,17 +53,26 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.name == "Enemy")
+        if(other.tag == "Enemy")
         {
             enemyAttacking = true;
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if(other.name == "Enemy")
+        if(other.tag == "Enemy")
         {
             enemyAttacking = false;
         }
+    }
+
+    public bool addHealth(float healthToAdd)
+    {
+        if (health >= maxHealth) return false;
+        float missingHealth = maxHealth - health;
+        if (healthToAdd < missingHealth) health += healthToAdd;
+        else health += missingHealth;
+        return true;
     }
 
 

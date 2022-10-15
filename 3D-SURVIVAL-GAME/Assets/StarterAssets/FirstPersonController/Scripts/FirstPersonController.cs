@@ -190,7 +190,7 @@ namespace StarterAssets
 				targetSpeed = 0.0f;
 			}
 
-            if (_input.sprint && sprintCoolDown >= 0)
+            if (_input.sprint && sprintCoolDown >= 0 && _input.move!=Vector2.zero)
             {
                 sprintCoolDown -= recoveryRate;
             }
