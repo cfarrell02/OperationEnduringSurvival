@@ -18,7 +18,7 @@ public class GunMechanics : MonoBehaviour
     void Start()
     {
         magazine = magazineCapacity;
-        ammo = maxAmmo;
+       // ammo = maxAmmo;
         gun = GetComponent<Gun>();
     }
 
