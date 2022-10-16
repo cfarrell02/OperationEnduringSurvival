@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GunMechanics : MonoBehaviour
 {
     
-    public int maxAmmo = 200,ammo,magazineCapacity = 20;
+    public int maxAmmo = 200,ammo=50,magazineCapacity = 20;
     private int magazine, killCount = 0;
     public float damage = 10f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
@@ -20,17 +21,19 @@ public class GunMechanics : MonoBehaviour
         magazine = magazineCapacity;
        // ammo = maxAmmo;
         gun = GetComponent<Gun>();
-        if (PlayerPrefs.HasKey("Ammo"))
+        if (PlayerPrefs.HasKey("Kills")&&SceneManager.GetActiveScene().buildIndex!=1)
         {
             ammo = PlayerPrefs.GetInt("Ammo");
             magazine = PlayerPrefs.GetInt("Magazine");
             killCount = PlayerPrefs.GetInt("Kills");
+
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+
         PlayerPrefs.SetInt("Ammo", ammo);
         PlayerPrefs.SetInt("Magazine", magazine);
         PlayerPrefs.SetInt("Kills", killCount);

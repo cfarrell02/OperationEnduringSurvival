@@ -574,7 +574,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Esc - Return to menu
+  m_text: 'Esc - Quit to menu
 
 
     Green Boxes - Health

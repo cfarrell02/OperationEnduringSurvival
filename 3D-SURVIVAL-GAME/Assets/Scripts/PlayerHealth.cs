@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour
         controller = GetComponent<StarterAssets.FirstPersonController>();
         health = maxHealth;
         Cursor.lockState = CursorLockMode.Locked;
-        if (PlayerPrefs.HasKey("Health")&&PlayerPrefs.GetFloat("Health")>0)
+        if (PlayerPrefs.HasKey("Health") && PlayerPrefs.GetFloat("Health") > 0 && SceneManager.GetActiveScene().buildIndex != 1) 
         {
             maxHealth = PlayerPrefs.GetFloat("MaxHealth");
             health = PlayerPrefs.GetFloat("Health");
@@ -55,6 +55,7 @@ public class PlayerHealth : MonoBehaviour
     }
     void die()
     {
+
         PlayerPrefs.DeleteAll();
         Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene(0);
