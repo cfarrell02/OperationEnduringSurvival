@@ -7,12 +7,12 @@ public class GunMechanics : MonoBehaviour
 {
     
     public int maxAmmo = 200,ammo,magazineCapacity = 20;
-    private int magazine;
+    private int magazine, killCount = 0;
     public float damage = 10f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
     public GameObject impactEffect;
     Gun gun;
-    public TextMeshProUGUI text;
+    public TextMeshProUGUI text,scoreText;
     private float nextTimeToFire = 0f;
     // Start is called before the first frame update
     void Start()
@@ -24,6 +24,7 @@ public class GunMechanics : MonoBehaviour
         {
             ammo = PlayerPrefs.GetInt("Ammo");
             magazine = PlayerPrefs.GetInt("Magazine");
+            killCount = PlayerPrefs.GetInt("Kills");
         }
     }
 
@@ -32,7 +33,9 @@ public class GunMechanics : MonoBehaviour
     {
         PlayerPrefs.SetInt("Ammo", ammo);
         PlayerPrefs.SetInt("Magazine", magazine);
+        PlayerPrefs.SetInt("Kills", killCount);
         text.SetText("Magazine: " + magazine + "\n Reserve Ammo: " + ammo);
+        scoreText.SetText("Kills: " + killCount);
         if (gun.isReloading()) return;
         if (ammo > maxAmmo) ammo = maxAmmo;
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire)
@@ -61,13 +64,15 @@ public class GunMechanics : MonoBehaviour
            Target target = hit.transform.GetComponent<Target>();
             if (target != null)
             {
-                target.TakeDamage(damage);
+                bool dead = target.TakeDamage(damage);
+                if (dead) killCount++;
             }
             if (hit.rigidbody != null)
             {
                 hit.rigidbody.AddForce(-hit.normal*impactForce);
             }
             GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            impactGO.transform.SetParent(hit.transform);
             Destroy(impactGO, 5f);
         }
 

@@ -26,7 +26,7 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void LoadNextLevel()
@@ -36,7 +36,12 @@ public class UI : MonoBehaviour
         SceneManager.LoadScene(currentLevel+1);
     }
 
-    private void OnApplicationQuit()
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    void OnApplicationQuit()
     {
         PlayerPrefs.DeleteAll();
     }

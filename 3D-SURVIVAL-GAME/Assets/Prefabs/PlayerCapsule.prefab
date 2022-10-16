@@ -230,7 +230,6 @@ GameObject:
   - component: {fileID: 4703677161384232605}
   - component: {fileID: 9072657965667457773}
   - component: {fileID: 755496953325278732}
-  - component: {fileID: 755496953325278727}
   - component: {fileID: 755496953325278840}
   m_Layer: 8
   m_Name: PlayerCapsule
@@ -246,7 +245,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9072657965667457761}
-  m_LocalRotation: {x: -0, y: 0.37698328, z: -0, w: 0.9262201}
+  m_LocalRotation: {x: 0, y: 0.37698418, z: 0, w: 0.9262197}
   m_LocalPosition: {x: 294.72, y: 1.54, z: 344.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -294,16 +293,19 @@ MonoBehaviour:
   Gravity: -15
   JumpTimeout: 0.1
   FallTimeout: 0.15
-  Grounded: 1
+  Grounded: 0
   GroundedOffset: -0.28
   GroundedRadius: 0.32
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 513
   CinemachineCameraTarget: {fileID: 3683545836845786042}
   TopClamp: 89
   BottomClamp: -89
   _verticalVelocity: 0
+  sprintCoolDown: 50
+  recoveryRate: 0.1
+  sprintBar: {fileID: 0}
 --- !u!114 &1227478294069374993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,22 +452,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 1.2169359
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &755496953325278727
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9072657965667457761}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.7986032, z: 0}
 --- !u!114 &755496953325278840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,7 +468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  text: {fileID: 0}
+  healthBar: {fileID: 0}
 --- !u!1001 &4295069872824145178
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -487,6 +476,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 755496952724040634}
     m_Modifications:
+    - target: {fileID: 655627822, guid: 53a65d740fcf8c6469b7a37435138a87, type: 3}
+      propertyPath: ammo
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 655627822, guid: 53a65d740fcf8c6469b7a37435138a87, type: 3}
       propertyPath: text
       value: 
