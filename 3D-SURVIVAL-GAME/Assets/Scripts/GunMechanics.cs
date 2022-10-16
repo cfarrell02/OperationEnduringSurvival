@@ -20,11 +20,18 @@ public class GunMechanics : MonoBehaviour
         magazine = magazineCapacity;
        // ammo = maxAmmo;
         gun = GetComponent<Gun>();
+        if (PlayerPrefs.HasKey("Ammo"))
+        {
+            ammo = PlayerPrefs.GetInt("Ammo");
+            magazine = PlayerPrefs.GetInt("Magazine");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        PlayerPrefs.SetInt("Ammo", ammo);
+        PlayerPrefs.SetInt("Magazine", magazine);
         text.SetText("Magazine: " + magazine + "\n Reserve Ammo: " + ammo);
         if (gun.isReloading()) return;
         if (ammo > maxAmmo) ammo = maxAmmo;

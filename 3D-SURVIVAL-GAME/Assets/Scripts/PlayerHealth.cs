@@ -6,23 +6,31 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth;
+    public float maxHealth = 100f;
     private float health;
     private StarterAssets.FirstPersonController controller;
     private float prevVelocity;
     public GameObject healthBar;
-    public TextMeshProUGUI text;
     private bool enemyAttacking;
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<StarterAssets.FirstPersonController>();
         health = maxHealth;
+        if(PlayerPrefs.HasKey("Health")&&PlayerPrefs.HasKey("MaxHealth"))
+        {
+            maxHealth = PlayerPrefs.GetFloat("MaxHealth");
+            health = PlayerPrefs.GetFloat("Health");
+        }
+       
+        PlayerPrefs.SetFloat("MaxHealth", maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        PlayerPrefs.SetFloat("Health", health);
         float width = (health / maxHealth) * Screen.width;
         RectTransform rectTransform = healthBar.gameObject.GetComponent<RectTransform>();
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);

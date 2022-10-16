@@ -21,7 +21,6 @@ public class HealthPack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print(other.name);
         if (other.name != "PlayerCapsule") return;
         GameObject player = other.gameObject;
         PlayerHealth health = player.GetComponent<PlayerHealth>();
