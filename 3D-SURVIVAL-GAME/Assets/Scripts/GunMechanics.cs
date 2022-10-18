@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEngine.UI;
 
 public class GunMechanics : MonoBehaviour
 {
@@ -15,13 +14,10 @@ public class GunMechanics : MonoBehaviour
     public GameObject impactEffect;
     Gun gun;
     public TextMeshProUGUI text,scoreText;
-    public GameObject magazineBar;
-    private float nextTimeToFire = 0f, magazineBarMax;
+    private float nextTimeToFire = 0f;
     // Start is called before the first frame update
     void Start()
     {
-        magazineBarMax = magazineBar.GetComponent<RectTransform>().sizeDelta.y;
-        
         magazine = magazineCapacity;
        // ammo = maxAmmo;
         gun = GetComponent<Gun>();
@@ -34,8 +30,6 @@ public class GunMechanics : MonoBehaviour
         }
     }
 
-    
-
     // Update is called once per frame
     void Update()
     {
@@ -43,7 +37,7 @@ public class GunMechanics : MonoBehaviour
         PlayerPrefs.SetInt("Ammo", ammo);
         PlayerPrefs.SetInt("Magazine", magazine);
         PlayerPrefs.SetInt("Kills", killCount);
-        updateAmmoUI(magazine, ammo);
+        text.SetText("Magazine: " + magazine + "\n Reserve Ammo: " + ammo);
         scoreText.SetText("Kills: " + killCount);
         if (gun.isReloading()) return;
         if (ammo > maxAmmo) ammo = maxAmmo;
@@ -56,15 +50,6 @@ public class GunMechanics : MonoBehaviour
         {
             Reload();
         }
-
-    }
-
-    void updateAmmoUI(int magazine, int ammo)
-    { 
-        text.SetText(ammo.ToString());
-        RectTransform rect = magazineBar.gameObject.GetComponent<RectTransform>();
-        float height = magazineBarMax * magazine / magazineCapacity ;
-        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
 
     }
     void Shoot()
