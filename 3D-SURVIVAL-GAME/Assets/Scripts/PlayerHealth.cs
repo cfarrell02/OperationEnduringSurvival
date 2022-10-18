@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
+    public UI uiController;
     private float health;
     private StarterAssets.FirstPersonController controller;
     private float prevVelocity;
@@ -47,18 +48,11 @@ public class PlayerHealth : MonoBehaviour
         }
         health -= processFallDamage();
 
-        if (Input.GetKeyDown("escape"))
-        {
-            die();
-            
-        }
     }
     void die()
     {
+        uiController.returnToMenu();
 
-        PlayerPrefs.DeleteAll();
-        Cursor.lockState = CursorLockMode.None;
-        SceneManager.LoadScene(0);
     }
 
     int processFallDamage()

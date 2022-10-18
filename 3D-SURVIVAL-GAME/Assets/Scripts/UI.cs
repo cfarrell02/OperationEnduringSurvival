@@ -27,6 +27,18 @@ public class UI : MonoBehaviour
     void Update()
     {
 
+        if (Input.GetKeyDown("escape"))
+        {
+            returnToMenu();
+
+        }
+    }
+
+    public void returnToMenu()
+    {
+        PlayerPrefs.DeleteAll();
+        Cursor.lockState = CursorLockMode.None;
+        SceneManager.LoadScene(0);
     }
 
     public void LoadNextLevel()
