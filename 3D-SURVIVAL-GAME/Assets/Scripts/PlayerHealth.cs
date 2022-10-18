@@ -10,6 +10,7 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth = 100f;
     private float health;
     private StarterAssets.FirstPersonController controller;
+    public UI uiController;
     private float prevVelocity;
     public GameObject healthBar;
     // Start is called before the first frame update
@@ -47,18 +48,12 @@ public class PlayerHealth : MonoBehaviour
         }
         health -= processFallDamage();
 
-        if (Input.GetKeyDown("escape"))
-        {
-            die();
-            
-        }
+
     }
     void die()
     {
 
-        PlayerPrefs.DeleteAll();
-        Cursor.lockState = CursorLockMode.None;
-        SceneManager.LoadScene(0);
+        uiController.returnToMenu();
     }
 
     int processFallDamage()

@@ -26,7 +26,10 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown("escape"))
+        {
+            returnToMenu();
+        }
     }
 
     public void LoadNextLevel()
@@ -35,7 +38,12 @@ public class UI : MonoBehaviour
         print(currentLevel);
         SceneManager.LoadScene(currentLevel+1);
     }
-
+    public void returnToMenu()
+    {
+        PlayerPrefs.DeleteAll();
+        Cursor.lockState = CursorLockMode.None;
+        SceneManager.LoadScene(0);
+    }
     public void Quit()
     {
         Application.Quit();
