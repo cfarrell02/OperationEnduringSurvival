@@ -15,6 +15,7 @@ public class GunMechanics : MonoBehaviour
     public GameObject impactEffect;
     Gun gun;
     public TextMeshProUGUI text,scoreText;
+    public PlayerHealth playerHealth;
     public GameObject magazineBar;
     private float nextTimeToFire = 0f,magazineBarMax;
     // Start is called before the first frame update
@@ -82,7 +83,11 @@ public class GunMechanics : MonoBehaviour
             if (target != null)
             {
                 bool dead = target.TakeDamage(damage);
-                if (dead) killCount++;
+                if (dead)
+                {
+                    killCount++;
+                    playerHealth.touchingEnemy = false;
+                }
             }
             if (hit.rigidbody != null)
             {

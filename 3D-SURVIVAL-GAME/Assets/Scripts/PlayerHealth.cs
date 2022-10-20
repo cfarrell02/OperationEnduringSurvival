@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     private float health;
     private StarterAssets.FirstPersonController controller;
     public UI uiController;
+    public bool touchingEnemy;
     private float prevVelocity;
     public GameObject healthBar;
     // Start is called before the first frame update
@@ -46,7 +47,11 @@ public class PlayerHealth : MonoBehaviour
             die();
             return;
         }
-        health -= processFallDamage();
+        if (touchingEnemy)
+        {
+            health--;
+        }
+            health -= processFallDamage();
 
 
     }
@@ -68,7 +73,14 @@ public class PlayerHealth : MonoBehaviour
         print(health);
         if (collision.transform.tag == "Enemy")
         {
-            health-=(maxHealth/20);
+            touchingEnemy = true;
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.transform.tag == "Enemy")
+        {
+            touchingEnemy = false;
         }
     }
 
