@@ -5,11 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class NextLevel : MonoBehaviour
 {
+    //Lift Script
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
+        animator.SetBool("isOpen", true);
     }
 
     // Update is called once per frame
@@ -20,6 +23,7 @@ public class NextLevel : MonoBehaviour
 
     IEnumerator LoadNextLevel(int timeToWait)
     {
+        animator.SetBool("isOpen", false);
         yield return new WaitForSeconds(timeToWait);
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
 
