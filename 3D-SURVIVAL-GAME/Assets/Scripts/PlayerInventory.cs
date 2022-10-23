@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private int inventoryCapacity = 10;
+    [SerializeField] GameObject[] weapons;
     private GameObject[] inventoryItems;
     // Start is called before the first frame update
     void Start()
@@ -18,16 +19,23 @@ public class PlayerInventory : MonoBehaviour
         
     }
 
-    void PickUpItem(GameObject item)
+    public GameObject[] getInventoryItems()
     {
-        if (GetItemIndex(item) != -1) return;
+        return inventoryItems;
+    }
+
+    bool PickUpItem(GameObject item)
+    {
+        if (GetItemIndex(item) != -1) return false;
       for(int i = 0; i< inventoryItems.Length; ++i)
         {
             if (inventoryItems[i] != null)
             {
                 inventoryItems[i] = item;
+                return true;
             }
         }
+       return false;
     }
     void DropItem(GameObject item)
     {
@@ -46,5 +54,22 @@ public class PlayerInventory : MonoBehaviour
         }
         return -1;
     }
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if(LayerMask.LayerToName( other.gameObject.layer) == "Pickups")
+        {
+            PickUpItem(other.gameObject);
+            
+
+            if(other.name == "Pistol_Pickup")
+            {
+                weapons[0].SetActive(true);
+            }
+
+
+
+            Destroy(other.gameObject);
+        }
+    }
+
 }
