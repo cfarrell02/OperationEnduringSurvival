@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class UI : MonoBehaviour
 {
 
+    bool paused = false;
+    public Animator uiAnimator;
+
     private void Awake()
     {
         GameObject[] ui = GameObject.FindGameObjectsWithTag("UI");
@@ -28,7 +31,7 @@ public class UI : MonoBehaviour
     {
         if (Input.GetKeyDown("escape"))
         {
-            returnToMenu();
+            Pause();
         }
     }
 
@@ -52,5 +55,22 @@ public class UI : MonoBehaviour
     void OnApplicationQuit()
     {
         PlayerPrefs.DeleteAll();
+    }
+    void Pause()
+    {
+        print(paused);
+        if (paused) paused = false;
+        else paused = true;
+
+        if (!paused)
+        {
+            Time.timeScale = 0;
+            uiAnimator.SetBool("isPaused", true);
+        }
+        else
+        {
+            Time.timeScale = 1;
+            uiAnimator.SetBool("isPaused", false);
+        }
     }
 }

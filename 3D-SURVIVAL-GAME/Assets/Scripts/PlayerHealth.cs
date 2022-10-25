@@ -70,7 +70,6 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        print(health);
         if (collision.transform.tag == "Enemy")
         {
             touchingEnemy = true;

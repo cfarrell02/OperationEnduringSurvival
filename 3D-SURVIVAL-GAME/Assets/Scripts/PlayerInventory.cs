@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
+using System;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -12,31 +13,59 @@ public class PlayerInventory : MonoBehaviour
     private int activeItems;
     [SerializeField] private GameObject[] weapons;
     [SerializeField] private Button[] inventoryButtons;
-    private readonly KeyCode[] keyCodes = new KeyCode[] { KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9 };
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip pickupSound;
+    private GameObject activeItem;
+    private PlayerHealth health;
+    private readonly KeyCode[] keyCodes = {
+         KeyCode.Alpha1,
+         KeyCode.Alpha2,
+         KeyCode.Alpha3,
+         KeyCode.Alpha4,
+         KeyCode.Alpha5,
+         KeyCode.Alpha6,
+         KeyCode.Alpha7,
+         KeyCode.Alpha8,
+         KeyCode.Alpha9,
+     };
 
     private GameObject[] inventoryItems;
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        health = GetComponent<PlayerHealth>();
         inventoryItems = new GameObject[inventoryCapacity];
         weapons[0].SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
-        
+
     {
         GetSelection();
-        if (GetItemByName("Pistol_PickUp") == null) weapons[0].SetActive(false);
-        else weapons[0].SetActive(true);
+        if (activeItem != null && activeItem.name == "Pistol_PickUp") weapons[0].SetActive(true);
+        else weapons[0].SetActive(false);
+
         for (int i = 0; i < inventoryItems.Length; ++i)
         {
-            if (inventoryItems[i] == null) {
-                inventoryButtons[i].gameObject.SetActive( false);
+            if (inventoryItems[i] == null)
+            {
+                inventoryButtons[i].gameObject.SetActive(false);
                 continue;
             }
             inventoryButtons[i].gameObject.SetActive(true);
-            inventoryButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(inventoryItems[i].name.Substring(0,4)+"...");
+            inventoryButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(inventoryItems[i].name.Substring(0, 4) + "...");
+        }
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            if (activeItem != null && activeItem.CompareTag("Health"))
+            {
+                if (!health.addHealth(20)) return;
+                int index = GetItemIndex(activeItem);
+                inventoryItems[index] = activeItem = null;
+            }
         }
     }
 
@@ -47,6 +76,7 @@ public class PlayerInventory : MonoBehaviour
 
     bool PickUpItem(GameObject item)
     {
+        audioSource.PlayOneShot(pickupSound);
         if (GetItemIndex(item) != -1) return false;
         item.SetActive(false);
 
@@ -88,7 +118,7 @@ public class PlayerInventory : MonoBehaviour
             if (inventoryItems[i] != null && inventoryItems[i].name == name) return inventoryItems[i];
         }
         return null;
-    }
+    }   
     private void OnTriggerEnter(Collider other)
     {
         if (LayerMask.LayerToName(other.gameObject.layer) == "Pickups")
@@ -101,27 +131,28 @@ public class PlayerInventory : MonoBehaviour
 
     private void GetSelection()
     {
-        for(int i = 0; i < keyCodes.Length; ++i)
+
+        if (Input.mouseScrollDelta.y == 0)
         {
-            if (Input.GetKeyDown(keyCodes[i])){
-                print("Pressed "+i);
+            for (int i = 0; i < keyCodes.Length; i++)
+            {
+                if (Input.GetKeyDown(keyCodes[i]))
+                {
+                    index = i;
+                }
             }
         }
-        // print(Input.mouseScrollDelta.y);
-        if(Input.mouseScrollDelta.y!=0)
-        index += 1;
-
-        index = index % activeItems;
-        
-        print("Active items " + activeItems);
-        print(index);
-
+        else
+            index += Input.mouseScrollDelta.y*10;
         for(int i = 0; i < activeItems; ++i)
         {
-            if(i == (int) index)
-            inventoryButtons[i].GetComponent<Image>().color = new Color(0, 0, 255, 1);
+            if (i == Math.Abs((int)(index % activeItems)))
+            {
+                inventoryButtons[i].GetComponent<Image>().color = new Color(0, 0, 155, 1);
+                activeItem = inventoryItems[i];
+            }
             else
-            inventoryButtons[i].GetComponent<Image>().color = new Color(255, 255, 255, 1);
+                inventoryButtons[i].GetComponent<Image>().color = new Color(255, 255, 255, 1);
         }
         
     }
