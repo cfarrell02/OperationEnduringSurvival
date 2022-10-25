@@ -19,16 +19,16 @@ public class HealthPack : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.name != "PlayerCapsule") return;
-        GameObject player = other.gameObject;
-        PlayerHealth health = player.GetComponent<PlayerHealth>();
-        if (health.addHealth(healthValue))
-        {
-            audioSource.PlayOneShot(healthSound);
-            Destroy(gameObject);
-        }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.name != "PlayerCapsule") return;
+    //    GameObject player = other.gameObject;
+    //    PlayerHealth health = player.GetComponent<PlayerHealth>();
+    //    if (health.addHealth(healthValue))
+    //    {
+    //        audioSource.PlayOneShot(healthSound);
+    //        Destroy(gameObject);
+    //    }
 
-    }
+    //}
 }

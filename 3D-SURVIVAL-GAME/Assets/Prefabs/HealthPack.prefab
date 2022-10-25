@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2749387179649060579}
   - component: {fileID: 2749387179649060588}
   - component: {fileID: 5374103034388333095}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: HealthPack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1587
+  m_VersionIndex: 1593
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

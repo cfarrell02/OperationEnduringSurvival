@@ -25,8 +25,8 @@ public class Ammunition : MonoBehaviour
         GunMechanics gunMechanics = gun.GetComponent<GunMechanics>();
         if (gunMechanics.ammo >= gunMechanics.maxAmmo) return;
         gunMechanics.ammo += ammunitionVal;
-        gun.GetComponent<AudioSource>().PlayOneShot(ammoNoise,1f);
+        gun.GetComponent<AudioSource>().PlayOneShot(ammoNoise, 1f);
         Destroy(this.gameObject);
-        
+
     }
 }

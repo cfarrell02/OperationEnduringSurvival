@@ -192,11 +192,11 @@ namespace StarterAssets
 
             if (_input.sprint && sprintCoolDown >= 0 && _input.move!=Vector2.zero)
             {
-                sprintCoolDown -= recoveryRate/2;
+                sprintCoolDown -= Time.deltaTime * recoveryRate/2 ;
             }
             else if (sprintCoolDown <= maxCooldown)
             {
-                sprintCoolDown += recoveryRate;
+                sprintCoolDown += Time.deltaTime * recoveryRate;
             }
 
             // a reference to the players current horizontal velocity
