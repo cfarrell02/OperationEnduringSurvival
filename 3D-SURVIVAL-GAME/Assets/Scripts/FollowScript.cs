@@ -19,10 +19,10 @@ namespace UnityStandardAssets.Utility
         {
             animator = GetComponentInChildren<Animator>();
             navMeshAgent = GetComponent<NavMeshAgent>();
-            for(int i = 0; i < 4; ++i)
+            for(int i = 0; i < waypoints.Length; ++i)
             {
-                waypoints[0] = new GameObject(name+" - Waypoint " + i);
-                waypoints[0].transform.position = transform.position + new Vector3(50*i+10,0,0);
+                waypoints[i] = new GameObject(name+" - Waypoint " + i);
+                waypoints[i].transform.position = transform.position + new Vector3(50*i+10,0,0);
             }
         }
         void Update()

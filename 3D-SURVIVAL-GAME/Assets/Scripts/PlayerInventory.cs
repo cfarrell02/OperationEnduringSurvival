@@ -43,9 +43,16 @@ public class PlayerInventory : MonoBehaviour
     void Update()
 
     {
+
+
         GetSelection();
-        if (activeItem != null && activeItem.name == "Pistol_PickUp") weapons[0].SetActive(true);
-        else weapons[0].SetActive(false);
+        if (activeItem != null)
+        {
+            if (activeItem.name == "Pistol_Pickup") weapons[0].SetActive(true);
+            else weapons[0].SetActive(false);
+            if (activeItem.name == "Knife_Pickup") weapons[1].SetActive(true);
+            else weapons[1].SetActive(false);
+        }
 
         for (int i = 0; i < inventoryItems.Length; ++i)
         {
@@ -66,6 +73,13 @@ public class PlayerInventory : MonoBehaviour
                 int index = GetItemIndex(activeItem);
                 inventoryItems[index] = activeItem = null;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            print("Wow");
+            DropItem(activeItem);
+            activeItem = null;
         }
     }
 
@@ -98,7 +112,7 @@ public class PlayerInventory : MonoBehaviour
         {
             Instantiate(inventoryItems[index]);
             inventoryItems[index] = null;
-            activeItems++;
+            activeItems--;
         }
     }
 
