@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class UI : MonoBehaviour
 {
 
     bool paused = false;
     public Animator uiAnimator;
+    public TextMeshProUGUI difficulty;
 
     private void Awake()
     {
@@ -58,7 +60,6 @@ public class UI : MonoBehaviour
     }
     void Pause()
     {
-        print(paused);
         if (paused) paused = false;
         else paused = true;
 
@@ -72,5 +73,21 @@ public class UI : MonoBehaviour
             Time.timeScale = 1;
             uiAnimator.SetBool("isPaused", false);
         }
+    }
+
+    public void OpenSettings()
+    {
+        uiAnimator.SetBool("settingsOpen", true);
+    }
+    public void CloseSettings()
+    {
+        uiAnimator.SetBool("settingsOpen", false);
+    }
+    public void AdjustDifficulty(int level)
+    {
+        print(level);
+        PlayerPrefs.SetInt("Difficulty", level);
+        difficulty.SetText("Difficulty (" + level+")");
+        
     }
 }

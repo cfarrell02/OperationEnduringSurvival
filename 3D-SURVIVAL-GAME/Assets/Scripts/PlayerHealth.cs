@@ -12,7 +12,7 @@ public class PlayerHealth : MonoBehaviour
     private StarterAssets.FirstPersonController controller;
     public UI uiController;
     public bool touchingEnemy;
-    private float prevVelocity;
+    private float prevVelocity, damageCoolDown = .5f, lastDamage;
     public GameObject healthBar;
     // Start is called before the first frame update
     void Start()
@@ -47,9 +47,10 @@ public class PlayerHealth : MonoBehaviour
             die();
             return;
         }
-        if (touchingEnemy)
+        if (touchingEnemy && Time.time-lastDamage > damageCoolDown)
         {
-            health--;
+            health-=10;
+            lastDamage = Time.time;
         }
             health -= processFallDamage();
 

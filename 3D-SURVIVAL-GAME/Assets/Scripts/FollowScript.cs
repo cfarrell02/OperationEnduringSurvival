@@ -1,54 +1,77 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-namespace UnityStandardAssets.Utility
-{
     public class FollowScript: MonoBehaviour
     {
         [SerializeField] GameObject target;
         [SerializeField] private float speed = 1.5f;
         [SerializeField] private float detectionDistance = 10f;
-        [SerializeField] private GameObject[] waypoints = new GameObject[4];
+        [SerializeField] private GameObject[] waypoints;
+        private int wayPointIndex;
+        private bool atWaypoint = true,waiting;
         private Animator animator;
         private NavMeshAgent navMeshAgent;
         private Ray ray;
         private RaycastHit hit;
         void Start()
         {
-            animator = GetComponentInChildren<Animator>();
-            navMeshAgent = GetComponent<NavMeshAgent>();
-            for(int i = 0; i < waypoints.Length; ++i)
-            {
-                waypoints[i] = new GameObject(name+" - Waypoint " + i);
-                waypoints[i].transform.position = transform.position + new Vector3(50*i+10,0,0);
-            }
+        animator = GetComponentInChildren<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        wayPointIndex = Random.Range(0, waypoints.Length);
+        // this.transform.position = waypoints[wayPointIndex].transform.position;
+        StartCoroutine(WaitAtWaypoint(1));
+
         }
-        void Update()
+    void Update()
+    {
+
+        ray.origin = gameObject.transform.position + Vector3.up;
+        ray.direction = gameObject.transform.forward;
+        Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
+
+
+        if (Physics.Raycast(ray.origin, ray.direction * 100, out hit))
         {
+            float distance = Vector3.Distance(this.transform.position, target.transform.position);
 
-            ray.origin = gameObject.transform.position + Vector3.up;
-            ray.direction = gameObject.transform.forward;
-            Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
-
-
-            if (Physics.Raycast(ray.origin, ray.direction * 100, out hit))
+            if (hit.collider.gameObject.name == target.name || distance < detectionDistance)
             {
-                float distance = Vector3.Distance(this.transform.position, target.transform.position);
+                navMeshAgent.destination = target.transform.position;
+                animator.SetBool("Walking", true);
+            }
 
-                if (hit.collider.gameObject.name == target.name || distance < detectionDistance)
+
+            else
+            {
+                float distanceToWaypoint = Vector3.Distance(this.transform.position, waypoints[wayPointIndex].transform.position);
+
+                if (!atWaypoint && distanceToWaypoint < 4)
                 {
-                    navMeshAgent.destination = target.transform.position;
-                    animator.SetBool("Walking", true);
+                    atWaypoint = true;
+                    animator.SetBool("Walking", false);
+
+                }
+                if (atWaypoint && !waiting)
+                {
+
+                    StartCoroutine(WaitAtWaypoint(Random.Range(10, 120)));
+                    waiting = true;
                 }
 
             }
-            else
-            {
-                int index = Random.Range(0, waypoints.Length - 1);
-                navMeshAgent.destination = waypoints[index].transform.position;
-            }
         }
     }
-}
+
+        private IEnumerator WaitAtWaypoint(float time)
+        {
+        yield return new WaitForSeconds(time);
+        waiting = false;
+        navMeshAgent.destination = waypoints[wayPointIndex].transform.position;
+        wayPointIndex = (wayPointIndex+1)%waypoints.Length;
+        animator.SetBool("Walking", true);
+    }
+    }
+

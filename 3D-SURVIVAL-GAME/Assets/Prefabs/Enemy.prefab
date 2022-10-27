@@ -83,6 +83,20 @@ MonoBehaviour:
   target: {fileID: 0}
   speed: 5
   detectionDistance: 50
+  waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &7814318084307942413
 MonoBehaviour:
   m_ObjectHideFlags: 0

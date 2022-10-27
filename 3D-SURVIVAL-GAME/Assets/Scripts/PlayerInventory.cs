@@ -77,8 +77,8 @@ public class PlayerInventory : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            print("Wow");
-            DropItem(activeItem);
+            print("Dropped " + activeItem.name);
+            DropItem(GetItemIndex(activeItem));
             activeItem = null;
         }
     }
@@ -105,12 +105,11 @@ public class PlayerInventory : MonoBehaviour
         }
        return false;
     }
-    void DropItem(GameObject item)
+    void DropItem(int index)
     {
-        int index = GetItemIndex(item);
         if (index == -1)
         {
-            Instantiate(inventoryItems[index]);
+           // Instantiate(inventoryItems[index]);
             inventoryItems[index] = null;
             activeItems--;
         }
