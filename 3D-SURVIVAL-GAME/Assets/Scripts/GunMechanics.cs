@@ -10,7 +10,7 @@ public class GunMechanics : MonoBehaviour
     
     public int maxAmmo = 200,ammo=50,magazineCapacity = 20;
     private int magazine, killCount = 0;
-    public float damage = 10f, range = 100f,impactForce = 30f,fireRate=15f;
+    public float damage = 25f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
     public GameObject impactEffect;
     Gun gun;
