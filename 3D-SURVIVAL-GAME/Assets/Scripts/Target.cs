@@ -25,7 +25,8 @@ public class Target : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        int difficulty = PlayerPrefs.GetInt("Difficulty");
+        health += 20 * difficulty;
     }
 
     // Update is called once per frame

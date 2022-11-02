@@ -13,10 +13,12 @@ public class PlayerHealth : MonoBehaviour
     public UI uiController;
     public bool touchingEnemy;
     private float prevVelocity, damageCoolDown = .5f, lastDamage;
+    private int diffficultyLevel;
     public GameObject healthBar;
     // Start is called before the first frame update
     void Start()
     {
+        diffficultyLevel = PlayerPrefs.GetInt("Difficulty");
         controller = GetComponent<StarterAssets.FirstPersonController>();
         health = maxHealth;
         Cursor.lockState = CursorLockMode.Locked;
@@ -49,12 +51,17 @@ public class PlayerHealth : MonoBehaviour
         }
         if (touchingEnemy && Time.time-lastDamage > damageCoolDown)
         {
-            health-=10;
+            TakeDamage(10 + 10 * diffficultyLevel);
             lastDamage = Time.time;
         }
             health -= processFallDamage();
 
 
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
     }
     void die()
     {

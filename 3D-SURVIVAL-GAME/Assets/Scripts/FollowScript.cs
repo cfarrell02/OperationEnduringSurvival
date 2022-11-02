@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
         [SerializeField] private float speed = 1.5f;
         [SerializeField] private float detectionDistance = 10f;
         [SerializeField] private GameObject[] waypoints;
-        private int wayPointIndex;
+        private int wayPointIndex,difficultyLevel;
         private bool atWaypoint = true,waiting;
         private Animator animator;
         private NavMeshAgent navMeshAgent;
@@ -18,6 +18,8 @@ using Random = UnityEngine.Random;
         private RaycastHit hit;
         void Start()
         {
+        speed += (difficultyLevel - 1);
+        difficultyLevel = PlayerPrefs.GetInt("Difficulty");
         animator = GetComponentInChildren<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         wayPointIndex = Random.Range(0, waypoints.Length);
@@ -37,7 +39,7 @@ using Random = UnityEngine.Random;
         {
             float distance = Vector3.Distance(this.transform.position, target.transform.position);
 
-            if (hit.collider.gameObject.name == target.name || distance < detectionDistance)
+            if (hit.collider.gameObject.name == target.name || distance < detectionDistance + 10*difficultyLevel)
             {
                 navMeshAgent.destination = target.transform.position;
                 animator.SetBool("Walking", true);

@@ -1439,9 +1439,9 @@ RectTransform:
   m_Father: {fileID: 1862345611}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 815, y: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 364, y: 0}
   m_SizeDelta: {x: 500, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1054389050
@@ -1566,25 +1566,13 @@ MonoBehaviour:
   m_FillRect: {fileID: 811561443}
   m_HandleRect: {fileID: 1675310167}
   m_Direction: 0
-  m_MinValue: 1
-  m_MaxValue: 3
+  m_MinValue: 0
+  m_MaxValue: 2
   m_WholeNumbers: 1
-  m_Value: 1
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 841961745}
-        m_TargetAssemblyTypeName: UI, Assembly-CSharp
-        m_MethodName: AdjustDifficulty
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1217637252
 GameObject:
   m_ObjectHideFlags: 0
@@ -3138,6 +3126,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 5200316133866370167, guid: 5b66713dfcac9478fb017647d5f33c2d,
+        type: 3}
+      propertyPath: slider
+      value: 
+      objectReference: {fileID: 1078859227}
     - target: {fileID: 5200316133866370167, guid: 5b66713dfcac9478fb017647d5f33c2d,
         type: 3}
       propertyPath: difficulty

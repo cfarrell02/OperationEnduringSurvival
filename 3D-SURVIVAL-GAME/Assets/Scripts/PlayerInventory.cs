@@ -14,7 +14,8 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private GameObject[] weapons;
     [SerializeField] private Button[] inventoryButtons;
     private AudioSource audioSource;
-    [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private AudioClip pickupSound,healthSound;
+
     private GameObject activeItem;
     private PlayerHealth health;
     private readonly KeyCode[] keyCodes = {
@@ -48,14 +49,18 @@ public class PlayerInventory : MonoBehaviour
         GetSelection();
         if (activeItem != null)
         {
-            if (activeItem.name == "Pistol_Pickup") weapons[0].SetActive(true);
+            if (activeItem.name.Length>=13 && activeItem.name.Substring(0,13) == "Pistol_Pickup") weapons[0].SetActive(true);
             else weapons[0].SetActive(false);
-            if (activeItem.name == "Knife_Pickup") weapons[1].SetActive(true);
+            if (activeItem.name.Length >= 12 && activeItem.name.Substring(0,12) == "Knife_Pickup") weapons[1].SetActive(true);
             else weapons[1].SetActive(false);
         }
-
+        else
+        {
+            foreach (GameObject weapon in weapons) weapon.SetActive(false);
+        }
         for (int i = 0; i < inventoryItems.Length; ++i)
         {
+            
             if (inventoryItems[i] == null)
             {
                 inventoryButtons[i].gameObject.SetActive(false);
@@ -70,12 +75,13 @@ public class PlayerInventory : MonoBehaviour
             if (activeItem != null && activeItem.CompareTag("Health"))
             {
                 if (!health.addHealth(20)) return;
+                audioSource.PlayOneShot(healthSound);
                 int index = GetItemIndex(activeItem);
                 inventoryItems[index] = activeItem = null;
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (activeItem!=null && Input.GetKeyDown(KeyCode.Q))
         {
             print("Dropped " + activeItem.name);
             DropItem(GetItemIndex(activeItem));
@@ -107,11 +113,22 @@ public class PlayerInventory : MonoBehaviour
     }
     void DropItem(int index)
     {
-        if (index == -1)
+        if (index != -1)
         {
-           // Instantiate(inventoryItems[index]);
+            GameObject droppedItem = Instantiate(inventoryItems[index],transform.position+transform.forward*1.1f+transform.up,transform.rotation);
+            droppedItem.SetActive(true);
+            droppedItem.GetComponent<Rigidbody>().AddForce(transform.forward);
             inventoryItems[index] = null;
+            FillInGap(ref inventoryItems, index);
             activeItems--;
+        }
+    }
+
+    void FillInGap(ref GameObject[] array, int index)
+    {
+        for(int i = index+1; i< array.Length; ++i)
+        {
+            array[i - 1] = array[i];
         }
     }
 
@@ -157,6 +174,9 @@ public class PlayerInventory : MonoBehaviour
         }
         else
             index += Input.mouseScrollDelta.y*10;
+
+
+
         for(int i = 0; i < activeItems; ++i)
         {
             if (i == Math.Abs((int)(index % activeItems)))
