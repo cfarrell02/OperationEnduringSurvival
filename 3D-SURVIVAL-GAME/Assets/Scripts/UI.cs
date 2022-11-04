@@ -13,34 +13,41 @@ public class UI : MonoBehaviour
     public Animator uiAnimator;
     public TextMeshProUGUI difficulty, version;
     [SerializeField] private Slider slider;
+    private int currentLevel;
     public enum difficulties { Easy,Normal,Hard };
 
-    private void Awake()
-    {
-        GameObject[] ui = GameObject.FindGameObjectsWithTag("UI");
-        if (ui.Length > 1)
-        {
-            Destroy(this.gameObject);
-        }
-        DontDestroyOnLoad(this.gameObject);
-    }
+    //private void Awake()
+    //{
+    //    GameObject[] ui = GameObject.FindGameObjectsWithTag("UI");
+       
+    //    if (ui.Length > 1)
+    //    {
+    //        Destroy(this.gameObject);
+    //    }else
+    //    DontDestroyOnLoad(this.gameObject);
+    //}
 
 
     // Start is called before the first frame update
     void Start()
     {
-        slider.onValueChanged.AddListener(e => AdjustDifficulty(((difficulties) ((int) e))));
-        difficulty.SetText("Difficulty (Easy)");
+        currentLevel = SceneManager.GetActiveScene().buildIndex;
+        if (currentLevel != 0) return;
+            slider.onValueChanged.AddListener(e => AdjustDifficulty(((difficulties)((int)e))));
+            difficulty.SetText("Difficulty (Easy)");
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            Pause();
-        }
+        if (currentLevel < 1) return;
+            version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                Pause();
+            }
+        
     }
 
     public void LoadNextLevel()
@@ -51,6 +58,7 @@ public class UI : MonoBehaviour
     }
     public void returnToMenu()
     {
+        Time.timeScale = 1;
         PlayerPrefs.DeleteAll();
         Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene(0);

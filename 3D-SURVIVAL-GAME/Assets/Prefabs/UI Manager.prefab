@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5200316133866370167}
   m_Layer: 0
   m_Name: UI Manager
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4bebf4fa33c34144a7f4eba842d72ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiAnimator: {fileID: 0}
+  difficulty: {fileID: 0}
+  version: {fileID: 0}
+  slider: {fileID: 0}
