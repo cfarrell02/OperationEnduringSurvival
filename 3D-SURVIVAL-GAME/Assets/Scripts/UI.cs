@@ -37,7 +37,7 @@ public class UI : MonoBehaviour
     void Update()
     {
         version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
-        if (Input.GetKeyDown("escape"))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             Pause();
         }
@@ -66,19 +66,26 @@ public class UI : MonoBehaviour
     }
     void Pause()
     {
-        if (paused) paused = false;
-        else paused = true;
 
+        print(paused ? "Paused" : "Not Paused");
         if (!paused)
         {
-            Time.timeScale = 0;
             uiAnimator.SetBool("isPaused", true);
+            StartCoroutine(ChangeTimeScaleAfter(0, .3f));
+            //Time.timeScale = 0;
+           
+            
         }
         else
         {
-            Time.timeScale = 1;
-            uiAnimator.SetBool("isPaused", false);
+
+            uiAnimator.SetBool("isPaused", false) ;
+            StartCoroutine(ChangeTimeScaleAfter(1, 0));
+            //Time.timeScale = 1;
+            
         }
+        Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.None;
+        paused = !paused;
     }
 
     public void OpenSettings()
@@ -95,5 +102,11 @@ public class UI : MonoBehaviour
         PlayerPrefs.SetInt("Difficulty", (int) level);
         difficulty.SetText("Difficulty (" + level+")");
         
+    }
+
+    IEnumerator ChangeTimeScaleAfter(int timeScale, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        Time.timeScale = timeScale;
     }
 }
