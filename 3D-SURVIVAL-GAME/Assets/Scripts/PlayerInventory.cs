@@ -74,7 +74,7 @@ public class PlayerInventory : MonoBehaviour
         {
             if (activeItem != null && activeItem.CompareTag("Health"))
             {
-                if (!health.addHealth(20)) return;
+                if (!health.AddHealth(20)) return;
                 audioSource.PlayOneShot(healthSound);
                 int index = GetItemIndex(activeItem);
                 inventoryItems[index] = activeItem = null;

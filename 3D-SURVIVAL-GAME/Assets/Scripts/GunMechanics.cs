@@ -86,7 +86,7 @@ public class GunMechanics : MonoBehaviour
                 if (dead)
                 {
                     killCount++;
-                    playerHealth.touchingEnemy = false;
+                   // playerHealth.touchingEnemy = false;
                 }
             }
             if (hit.rigidbody != null)

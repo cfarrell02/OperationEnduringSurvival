@@ -32,7 +32,7 @@ public class UI : MonoBehaviour
     void Start()
     {
         currentLevel = SceneManager.GetActiveScene().buildIndex;
-        if (currentLevel != 0) return;
+        if (currentLevel != 0) return; // If not start level return
             slider.onValueChanged.AddListener(e => AdjustDifficulty(((difficulties)((int)e))));
             difficulty.SetText("Difficulty (Easy)");
        
@@ -41,12 +41,23 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentLevel < 1) return;
+        if(currentLevel == 0)
+        {
+            //Start Level Stuff
+            return;
+        }
+        if(currentLevel == SceneManager.sceneCount - 1)
+        {
+            //End Level Stuff
+            return;
+        }
+
             version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 Pause();
             }
+        
         
     }
 

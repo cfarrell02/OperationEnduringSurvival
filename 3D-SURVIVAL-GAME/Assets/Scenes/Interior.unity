@@ -45314,6 +45314,7 @@ GameObject:
   - component: {fileID: 979768004}
   - component: {fileID: 979768011}
   - component: {fileID: 979768010}
+  - component: {fileID: 979768012}
   m_Layer: 11
   m_Name: Antidote
   m_TagString: Untagged
@@ -45676,7 +45677,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 979768003}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.95835876, y: 0.55467725, z: 0.88998795}
@@ -45697,6 +45698,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &979768012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979768003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6711bc87160ae48bea9b7634a84d18dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &982722467
 Mesh:
   m_ObjectHideFlags: 0
@@ -72062,7 +72075,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh1625778
+  m_Name: pb_Mesh572558
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

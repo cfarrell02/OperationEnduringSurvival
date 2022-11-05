@@ -7,17 +7,19 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 100f;
+    public float maxHealth = 100f, detectionRadius=.4f;
     private float health;
     private StarterAssets.FirstPersonController controller;
     public UI uiController;
-    public bool touchingEnemy;
+    public LayerMask enemyLayer;
+    private bool touchingEnemy;
     private float prevVelocity, damageCoolDown = .5f, lastDamage;
     private int diffficultyLevel;
     public GameObject healthBar;
     // Start is called before the first frame update
     void Start()
     {
+        //detectionRadius = GetComponent<CapsuleCollider>().radius;
         diffficultyLevel = PlayerPrefs.GetInt("Difficulty");
         controller = GetComponent<StarterAssets.FirstPersonController>();
         health = maxHealth;
@@ -46,15 +48,16 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0)
         {
             health = 0;
-            die();
+            Die();
             return;
         }
+        touchingEnemy = Physics.CheckSphere(transform.position, detectionRadius, enemyLayer.value);
         if (touchingEnemy && Time.time-lastDamage > damageCoolDown)
         {
             TakeDamage(10 + 10 * diffficultyLevel);
             lastDamage = Time.time;
         }
-            health -= processFallDamage();
+            health -= ProcessFallDamage();
 
 
     }
@@ -63,35 +66,21 @@ public class PlayerHealth : MonoBehaviour
     {
         health -= damage;
     }
-    void die()
+    void Die()
     {
 
         uiController.returnToMenu();
     }
 
-    int processFallDamage()
+    int ProcessFallDamage()
     {
         float velocityChange = controller._verticalVelocity - prevVelocity;
         prevVelocity = controller._verticalVelocity;
         return velocityChange < 15 ? 0 : (int)(velocityChange * 1.5);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.tag == "Enemy")
-        {
-            touchingEnemy = true;
-        }
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.transform.tag == "Enemy")
-        {
-            touchingEnemy = false;
-        }
-    }
 
-    public bool addHealth(float healthToAdd)
+    public bool AddHealth(float healthToAdd)
     {
         if (health >= maxHealth) return false;
         float missingHealth = maxHealth - health;
@@ -99,6 +88,7 @@ public class PlayerHealth : MonoBehaviour
         else health += missingHealth;
         return true;
     }
+
 
 
 }
