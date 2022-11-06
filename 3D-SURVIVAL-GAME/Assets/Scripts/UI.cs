@@ -53,7 +53,7 @@ public class UI : MonoBehaviour
         }
 
             version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Pause();
             }

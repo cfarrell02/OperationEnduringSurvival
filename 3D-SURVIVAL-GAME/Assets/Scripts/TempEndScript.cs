@@ -18,10 +18,12 @@ public class TempEndScript : MonoBehaviour
 
     IEnumerator LoadNextLevel(int timeToWait)
     {
+        GetComponent<MeshRenderer>().enabled = false;
         yield return new WaitForSeconds(timeToWait);
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
-
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene(currentIndex + 1);
+        
 
     }
 
@@ -30,9 +32,9 @@ public class TempEndScript : MonoBehaviour
 
         if (other.name == "PlayerCapsule")
         {
-            
+            print("Loading level " + SceneManager.GetActiveScene().buildIndex + 1);   
             StartCoroutine(LoadNextLevel(4));
-            Destroy(gameObject);
+            
         }
     }
 }

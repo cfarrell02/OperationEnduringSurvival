@@ -14,10 +14,10 @@ public class BackgroundAudio : MonoBehaviour
     void Start()
     {
         levelIndex = SceneManager.GetActiveScene().buildIndex;
+        //print(levelIndex);
         audioSource = GetComponent<AudioSource>();
         startTime = Time.time;
-        print(levelIndex - 1 <= levelNoise.Length);
-        if (levelIndex - 1 <= levelNoise.Length) {
+        if (levelIndex - 1 <levelNoise.Length) {
             audioSource.clip = levelNoise[levelIndex - 1];
             audioSource.Play();
         }
@@ -31,7 +31,7 @@ public class BackgroundAudio : MonoBehaviour
         if(Time.time - startTime >= timeUntilNextSound)
         {
             audioSource.PlayOneShot(zombieNoise,.1f);
-            timeUntilNextSound = Random.Range(5, 60);
+            timeUntilNextSound = Random.Range(30, 300);
 
         }
     }

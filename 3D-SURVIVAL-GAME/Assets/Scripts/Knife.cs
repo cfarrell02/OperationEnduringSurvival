@@ -5,7 +5,7 @@ using UnityEngine;
 public class Knife : MonoBehaviour
 {
 
-    public float damage = 50f;
+    public float damage = 100f;
     private Animator animator;
     [SerializeField] private AnimationClip[] attackAnimations;
 

@@ -10,10 +10,13 @@ public class Grenade : MonoBehaviour
     public float throwForce = 15f;
     public int maxGrenades = 4,grenades;
     [SerializeField] private TextMeshProUGUI grenadeCount;
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip grenadePickUp;
 
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         grenades = 0;
     }
 
@@ -36,6 +39,7 @@ public class Grenade : MonoBehaviour
         if (grenades == maxGrenades) return false;
         if (grenades + amountOfGrenades <= maxGrenades) grenades += amountOfGrenades;
         else grenades = maxGrenades;
+        audioSource.PlayOneShot(grenadePickUp);
         return true;
     }
 

@@ -926,13 +926,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Esc - Quit to menu
-
+  m_text: 'Esc - Pause
 
     Green Boxes - Health
 
+    Red Boxes - Ammo
 
-    Red Boxes - Ammo'
+    Weapons
+    are pickups
+
+    Q - drop items'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2d7ab6ed3c5028e49a1aa74e29252465, type: 2}
   m_sharedMaterial: {fileID: -3012505942834673590, guid: 2d7ab6ed3c5028e49a1aa74e29252465,

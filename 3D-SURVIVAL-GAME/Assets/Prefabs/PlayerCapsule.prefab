@@ -665,8 +665,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  detectionRadius: 0.9
   uiController: {fileID: 0}
-  touchingEnemy: 0
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
   healthBar: {fileID: 0}
 --- !u!65 &8616685848371567673
 BoxCollider:
