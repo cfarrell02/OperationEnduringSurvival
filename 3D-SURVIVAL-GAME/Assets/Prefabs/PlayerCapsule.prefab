@@ -279,6 +279,7 @@ MonoBehaviour:
   maxGrenades: 4
   grenades: 0
   grenadeCount: {fileID: 0}
+  grenadePickUp: {fileID: 8300000, guid: 076232a07b7df624ebdf0bd8ca365295, type: 3}
 --- !u!1 &3683545836845786042
 GameObject:
   m_ObjectHideFlags: 0
@@ -904,8 +905,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 543.30865, y: 3157.8733, z: 725.1396}
-  m_Center: {x: -34.652603, y: -1305.0366, z: 0.00039672852}
+  m_Size: {x: 1727.7854, y: 4114.868, z: 1151.2146}
+  m_Center: {x: 75.98779, y: -1783.5323, z: -37.4328}
 --- !u!95 &857224043
 Animator:
   serializedVersion: 4
