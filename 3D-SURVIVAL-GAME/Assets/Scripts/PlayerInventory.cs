@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 //using static UnityEditor.Progress;
 using System;
 
@@ -15,6 +16,7 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private Button[] inventoryButtons;
     private AudioSource audioSource;
     [SerializeField] private AudioClip pickupSound,healthSound;
+    private GameSession session;
 
     private GameObject activeItem;
     private PlayerHealth health;
@@ -34,9 +36,15 @@ public class PlayerInventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        session = FindObjectOfType<GameSession>();
         audioSource = GetComponent<AudioSource>();
         health = GetComponent<PlayerHealth>();
-        inventoryItems = new GameObject[inventoryCapacity];
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            inventoryItems = new GameObject[inventoryCapacity];
+            session.inventory = inventoryItems;
+        }
+        else inventoryItems = session.inventory;
         weapons[0].SetActive(false);
     }
 
@@ -96,6 +104,7 @@ public class PlayerInventory : MonoBehaviour
 
     bool PickUpItem(GameObject item)
     {
+        
         audioSource.PlayOneShot(pickupSound);
         if (GetItemIndex(item) != -1) return false;
         item.SetActive(false);
@@ -106,6 +115,7 @@ public class PlayerInventory : MonoBehaviour
             {
                 inventoryItems[i] = item;
                 activeItems++;
+                session.inventory = inventoryItems;
                 return true;
             }
         }
@@ -121,6 +131,7 @@ public class PlayerInventory : MonoBehaviour
             inventoryItems[index] = null;
             FillInGap(ref inventoryItems, index);
             activeItems--;
+            session.inventory = inventoryItems;
         }
     }
 
