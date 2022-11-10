@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ProceduralGeneration : MonoBehaviour
 {
@@ -43,12 +45,23 @@ public class ProceduralGeneration : MonoBehaviour
                     if (!tilePlane.Contains(pos))
                     {
                         //int index = Mathf.Abs(z + radius) % 4;
-                        int index = Random.Range(0,4);
-                        int randomAngle = Random.Range(1, 4) * 90;
-                        RoadType road = new RoadType(blockTypes[index],pos,randomAngle);
+                        int index = Random.Range(0, 4);
+                        //print(index);
+                        int randomAngle = Random.Range(0, 4) * 90;
+                        RoadType road = new RoadType(blockTypes[index], pos, randomAngle);
                         GameObject _plane = road.InstatiateRoad();
                         tilePlane.Add(pos, road);
                     }
+                }
+            }
+            foreach(RoadType road in tilePlane.Values)
+            {
+                if (!Connected(road)) {
+                    RoadType clone = road;
+                    road.DestroyGameObject();
+                    RoadType newRoad = new RoadType(blockTypes[4], clone.position, clone.rotation);
+                    newRoad.InstatiateRoad();
+                    tilePlane[clone.position] = newRoad;
                 }
             }
         }
@@ -64,11 +77,48 @@ public class ProceduralGeneration : MonoBehaviour
         return false;
     }
 
+    bool Connected(RoadType road)
+    {
+        if (road.name == "NoRoad") return true;
+        Vector3 position = road.position;
+        Vector3[] surroundingPositions = new Vector3[4];
+        surroundingPositions[0] = road.position + new Vector3(-25, 0, 0); //Up
+        surroundingPositions[1] = road.position + new Vector3(25, 0, 0);//Down
+        surroundingPositions[2] = road.position + new Vector3(0, 0, -25);//Left
+        surroundingPositions[3] = road.position + new Vector3(0, 0, 25);//Right
+        bool isConnected = false;
+        for(int i =0;i<surroundingPositions.Length;++i)
+        {
+            if (tilePlane.ContainsKey(surroundingPositions[i]))
+            {
+                RoadType otherRoad = (RoadType) tilePlane[surroundingPositions[i]];
+                switch (i)
+                {
+                    case 0:
+                        isConnected = road.WillConnect(otherRoad, "Up", "Down");
+                        break;
+                    case 1:
+                        isConnected = road.WillConnect(otherRoad, "Down", "Up");
+                        break;
+                    case 2:
+                        isConnected = road.WillConnect(otherRoad, "Left", "Right");
+                        break;
+                    case 3:
+                        isConnected = road.WillConnect(otherRoad, "Right", "Left");
+                        break;
+                }
+                if (isConnected) return true;
+            }
+        }
+
+        return isConnected;
+    }
+
     public class RoadType{
 
         private GameObject gameObject;
         public string name;
-        private Vector3 position;
+        public Vector3 position;
         public float rotation;
         private Hashtable connections;
 
@@ -80,6 +130,7 @@ public class ProceduralGeneration : MonoBehaviour
             this.rotation = rotation;
             this.name = gameObject.name;
             connections = new Hashtable();
+
             switch (name)
             {
                 case "CrossRoads":
@@ -89,7 +140,7 @@ public class ProceduralGeneration : MonoBehaviour
                     connections.Add("Right", true);
                     break;
                 case "StraightRoad":
-                    if (rotation / 90 >= 1)
+                    if (rotation == 90 || rotation == 270)
                     {
                         connections.Add("Left", true);
                         connections.Add("Right", true);
@@ -142,8 +193,6 @@ public class ProceduralGeneration : MonoBehaviour
                         connections["Down"] = false;
                     }
                     break;
-                default:
-                    break;
             }
               
         }
@@ -163,8 +212,17 @@ public class ProceduralGeneration : MonoBehaviour
             return this.gameObject;
         }
 
+        public void DestroyGameObject()
+        {
+            Destroy(this.gameObject);
+        }
+
         public bool WillConnect(RoadType other, string direction, string otherDirection)
         {
+            print("Type " + name + " with rotation " + rotation);
+            print("This " + direction + " other " + otherDirection);
+            print("Connected with " + other.name + " with rotation " + other.rotation + ": ");
+            print(HasConnection(direction) && other.HasConnection(otherDirection));
             return HasConnection(direction) && other.HasConnection(otherDirection);
             
         }
