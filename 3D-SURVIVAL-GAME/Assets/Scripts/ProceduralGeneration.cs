@@ -31,6 +31,7 @@ public class ProceduralGeneration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       // int randomAngle = 0;
         if (startPos == Vector3.zero || HasPlayerMoved())
         {
             for (int x = -radius; x < radius; x++)
@@ -44,10 +45,12 @@ public class ProceduralGeneration : MonoBehaviour
 
                     if (!tilePlane.Contains(pos))
                     {
-                        //int index = Mathf.Abs(z + radius) % 4;
+                      //int index = Mathf.Abs(z + radius) % 4;
                         int index = Random.Range(0, 4);
-                        //print(index);
+                      //index = 2;
+                      //print(index);
                         int randomAngle = Random.Range(0, 4) * 90;
+                      //randomAngle = (randomAngle + 90) % 360;
                         RoadType road = new RoadType(blockTypes[index], pos, randomAngle);
                         GameObject _plane = road.InstatiateRoad();
                         tilePlane.Add(pos, road);
@@ -56,7 +59,8 @@ public class ProceduralGeneration : MonoBehaviour
             }
             foreach(RoadType road in tilePlane.Values)
             {
-                if (!Connected(road)) {
+                if (!Connected(road))
+                {
                     RoadType clone = road;
                     road.DestroyGameObject();
                     RoadType newRoad = new RoadType(blockTypes[4], clone.position, clone.rotation);
@@ -79,13 +83,13 @@ public class ProceduralGeneration : MonoBehaviour
 
     bool Connected(RoadType road)
     {
-        if (road.name == "NoRoad") return true;
+       // if (road.name == "NoRoad") return true;
         Vector3 position = road.position;
         Vector3[] surroundingPositions = new Vector3[4];
-        surroundingPositions[0] = road.position + new Vector3(-25, 0, 0); //Up
-        surroundingPositions[1] = road.position + new Vector3(25, 0, 0);//Down
-        surroundingPositions[2] = road.position + new Vector3(0, 0, -25);//Left
-        surroundingPositions[3] = road.position + new Vector3(0, 0, 25);//Right
+        surroundingPositions[0] = road.position + new Vector3(planeOffset, 0, 0); //Up
+        surroundingPositions[1] = road.position + new Vector3(-planeOffset, 0, 0);//Down
+        surroundingPositions[2] = road.position + new Vector3(0, 0, planeOffset);//Left
+        surroundingPositions[3] = road.position + new Vector3(0, 0, -planeOffset);//Right
         bool isConnected = false;
         for(int i =0;i<surroundingPositions.Length;++i)
         {
@@ -204,11 +208,7 @@ public class ProceduralGeneration : MonoBehaviour
 
         public GameObject InstatiateRoad()
         {
-            //this.position = pos;
-            //this.rotation = rotation;
-
-            this.gameObject = Instantiate(gameObject, position, Quaternion.identity);
-            this.gameObject.transform.rotation = Quaternion.Euler(0, rotation, 0);
+            this.gameObject = Instantiate(gameObject, position, Quaternion.Euler(0,rotation,0));
             return this.gameObject;
         }
 
