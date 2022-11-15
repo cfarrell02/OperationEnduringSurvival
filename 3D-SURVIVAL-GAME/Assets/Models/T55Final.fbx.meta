@@ -3,42 +3,7 @@ guid: e1313a4b18a0148c5b9baa42eb4a6569
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Base
-    second: {fileID: 2100000, guid: 76805cbea97f64587b9243a7eaa92db1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Lights
-    second: {fileID: 2100000, guid: f76ea96e1583f4de6994027285d462ae, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Zahal
-    second: {fileID: 2100000, guid: df3827f97253849f19c477124620bf83, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: glass
-    second: {fileID: 2100000, guid: 33d565e7c3cdb42c8a4de938b9432089, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: meta
-    second: {fileID: 2100000, guid: 9e6b041f574f6432cb3ac92451f6461a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: wings
-    second: {fileID: 2100000, guid: 77056594cebdb447699fdcccc6d3cd3d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: wood
-    second: {fileID: 2100000, guid: ab84e1815e28e49b4bbf700ca16c7b04, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

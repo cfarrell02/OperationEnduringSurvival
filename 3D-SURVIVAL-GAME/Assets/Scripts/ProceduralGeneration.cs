@@ -9,7 +9,7 @@ public class ProceduralGeneration : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject[] blockTypes;
 
-    private int radius = 5, planeOffset = 25;
+    [SerializeField] private int radius = 5, planeOffset = 25;
 
     private Vector3 startPos = Vector3.zero;
 

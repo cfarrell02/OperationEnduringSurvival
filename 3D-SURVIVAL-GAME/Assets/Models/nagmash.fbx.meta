@@ -3,52 +3,7 @@ guid: f8d0b421833ce4d9eac659cfa334031c
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Base
-    second: {fileID: 2100000, guid: d90a2c852029d45138fbd99bc1221ed0, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Flashlight
-    second: {fileID: 2100000, guid: da9034ccae05e4485af25c2a1af2f0a3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: b42b4c994e3374d298b896aed9ce4c65, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Metal
-    second: {fileID: 2100000, guid: 2c2cec7237617412584e45a9ddbd9845, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Red light
-    second: {fileID: 2100000, guid: 35e40da6aac5a44c0b7dab093119174c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: SandBags
-    second: {fileID: 2100000, guid: b1a4f7759545f495db594d4e8ab5b2f8, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: WOOD
-    second: {fileID: 2100000, guid: 82684def614fa4ceba73459a67945ad2, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Wheels
-    second: {fileID: 2100000, guid: 3f7aa5142fa4643e0a4288b8126b6edb, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: glass
-    second: {fileID: 2100000, guid: 38cd82e92b9f6447d9dcb3cc4774c4ef, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
