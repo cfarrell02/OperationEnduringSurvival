@@ -599,11 +599,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1721139024}
   blockTypes:
-  - {fileID: 844598610472745069, guid: c22fe2fc4472246f09111c1ee583111c, type: 3}
-  - {fileID: 6528337875826369390, guid: 8a3bfe2b4e6c44e9ca2ec13d0658802a, type: 3}
-  - {fileID: 4463972796272906350, guid: ac353dd2147e74b68984063485e37d36, type: 3}
+  - {fileID: 844598610472745069, guid: 10cc45460041348dfae8f62e96122d53, type: 3}
+  - {fileID: 6528337875826369390, guid: 3b391e4f80f5b487cbd36a91f16b77a7, type: 3}
+  - {fileID: 4463972796272906350, guid: 477dba8d0f8ff4ef4b90e38eb68a0ff2, type: 3}
   - {fileID: 1918186215569665248, guid: 6d63476d65ab74f49b95f4b3a5d17246, type: 3}
   - {fileID: 7678657113157280195, guid: 73c65b9726c3e4f9dba7fb07f21df5dd, type: 3}
+  radius: 5
+  planeOffset: 40
 --- !u!4 &2008163962
 Transform:
   m_ObjectHideFlags: 0

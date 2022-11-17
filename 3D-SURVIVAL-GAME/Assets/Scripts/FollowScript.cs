@@ -6,10 +6,10 @@ using Random = UnityEngine.Random;
 
     public class FollowScript: MonoBehaviour
     {
-        [SerializeField] GameObject target;
+        public GameObject target;
         [SerializeField] private float speed = 1.5f;
         [SerializeField] private float detectionDistance = 10f;
-        [SerializeField] private GameObject[] waypoints;
+        public GameObject[] waypoints;
         private int wayPointIndex,difficultyLevel;
         private bool atWaypoint = true,waiting;
         private Animator animator;
