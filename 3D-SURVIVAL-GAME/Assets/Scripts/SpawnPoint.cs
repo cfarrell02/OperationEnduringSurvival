@@ -16,6 +16,17 @@ public class SpawnPoint : MonoBehaviour
     void Start()
     {
         timeLastSpawned = Time.time;
+        //Vector3[] corners = new Vector3[4];
+        //corners[0] = transform.position + new Vector3(maxSpawnArea, 0, maxSpawnArea);
+        //corners[1] = transform.position + new Vector3(maxSpawnArea, 0, -maxSpawnArea);
+        //corners[2] = transform.position + new Vector3(-maxSpawnArea, 0 - maxSpawnArea);
+        //corners[3] = transform.position + new Vector3(-maxSpawnArea, 0, maxSpawnArea);
+        //for(int i = 0; i < corners.Length - 1; ++i)
+        //{
+        //    print(corners[i]);
+        //    Debug.DrawLine(corners[i], corners[i + 1], Color.green);
+        //}
+        
     }
 
     // Update is called once per frame
@@ -40,9 +51,10 @@ public class SpawnPoint : MonoBehaviour
             Vector3 offSet = new Vector3(Random.Range(-maxSpawnArea, maxSpawnArea),
                 0, Random.Range(-maxSpawnArea, maxSpawnArea));
             GameObject enemy = Instantiate(enemies[0], this.transform.position + offSet
-                , Quaternion.identity, this.transform);
+                , Quaternion.identity);
 
             FollowScript fs = enemy.GetComponent<FollowScript>();
+            enemy.GetComponent<Target>().parentSpawnPoint = this;
             fs.target = playerCapsule;
             fs.waypoints = wayPoints;
 

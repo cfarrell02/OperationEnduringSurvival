@@ -11,10 +11,8 @@ public class UI : MonoBehaviour
 
     bool paused = false;
     public Animator uiAnimator;
-    public TextMeshProUGUI difficulty, version;
-    [SerializeField] private Slider slider;
+    public TextMeshProUGUI version;
     private int currentLevel;
-    public enum difficulties { Easy,Normal,Hard };
 
     //private void Awake()
     //{
@@ -32,9 +30,9 @@ public class UI : MonoBehaviour
     void Start()
     {
         currentLevel = SceneManager.GetActiveScene().buildIndex;
-        if (currentLevel != 0) return; // If not start level return
-            slider.onValueChanged.AddListener(e => AdjustDifficulty(((difficulties)((int)e))));
-            difficulty.SetText("Difficulty (Easy)");
+        //if (currentLevel != 0) return; // If not start level return
+        //    slider.onValueChanged.AddListener(e => AdjustDifficulty(((difficulties)((int)e))));
+        //    difficulty.SetText("Difficulty (Easy)");
        
     }
 
@@ -52,7 +50,7 @@ public class UI : MonoBehaviour
             return;
         }
 
-            version.SetText("Operation: Enduring Survival P2 (" + PlayerPrefs.GetInt("Difficulty") + ")");
+            version.SetText("Operation: Enduring Survival P3 (" + PlayerPrefs.GetInt("Difficulty") + ")");
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Pause();
@@ -115,13 +113,13 @@ public class UI : MonoBehaviour
     {
         uiAnimator.SetBool("settingsOpen", false);
     }
-    public void AdjustDifficulty(difficulties level)
-    {
-       // print(level);
-        PlayerPrefs.SetInt("Difficulty", (int) level);
-        difficulty.SetText("Difficulty (" + level+")");
+    //public void AdjustDifficulty(difficulties level)
+    //{
+    //   // print(level);
+    //    PlayerPrefs.SetInt("Difficulty", (int) level);
+    //    difficulty.SetText("Difficulty (" + level+")");
         
-    }
+    //}
 
     IEnumerator ChangeTimeScaleAfter(int timeScale, float seconds)
     {

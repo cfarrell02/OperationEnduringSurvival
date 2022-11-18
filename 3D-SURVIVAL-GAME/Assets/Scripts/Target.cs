@@ -5,7 +5,7 @@ using UnityEngine;
 public class Target : MonoBehaviour
 {
     public float health = 100f;
-    SpawnPoint parentSpawnPoint;
+    public SpawnPoint parentSpawnPoint;
 
     public bool TakeDamage(float amount)
     {
@@ -29,7 +29,6 @@ public class Target : MonoBehaviour
     {
         int difficulty = PlayerPrefs.GetInt("Difficulty");
         health += 20 * difficulty;
-        parentSpawnPoint = GetComponentInParent<SpawnPoint>();
     }
 
     // Update is called once per frame

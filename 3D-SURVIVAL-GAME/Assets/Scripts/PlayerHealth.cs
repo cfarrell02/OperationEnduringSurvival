@@ -13,9 +13,10 @@ public class PlayerHealth : MonoBehaviour
     public UI uiController;
     public LayerMask enemyLayer;
     private bool touchingEnemy;
-    private float prevVelocity, damageCoolDown = .5f, lastDamage;
-    private int diffficultyLevel;
+    private float prevVelocity, damageCoolDown = .5f, lastDamage, minuteStart;
+    private int diffficultyLevel, killsPerMinute = 0;
     public GameObject healthBar;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -29,14 +30,13 @@ public class PlayerHealth : MonoBehaviour
             maxHealth = PlayerPrefs.GetFloat("MaxHealth");
             health = PlayerPrefs.GetFloat("Health");
         }
-       
+        minuteStart = Time.time;
         PlayerPrefs.SetFloat("MaxHealth", maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         PlayerPrefs.SetFloat("Health", health);
         float width = (health / maxHealth) * Screen.width;
         RectTransform rectTransform = healthBar.gameObject.GetComponent<RectTransform>();
@@ -57,6 +57,8 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(10 + 10 * diffficultyLevel);
             lastDamage = Time.time;
         }
+
+
             health -= ProcessFallDamage();
 
 

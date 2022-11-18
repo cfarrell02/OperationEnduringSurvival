@@ -9,7 +9,7 @@ public class GunMechanics : MonoBehaviour
 {
     
     public int maxAmmo = 200,ammo=50,magazineCapacity = 20;
-    private int magazine, killCount = 0;
+    private int magazine, killCount = 0,startKills;
     public float damage = 25f, range = 100f,impactForce = 30f,fireRate=15f;
     public Camera fpsCam;
     public GameObject impactEffect;
@@ -17,10 +17,11 @@ public class GunMechanics : MonoBehaviour
     public TextMeshProUGUI text,scoreText;
     public PlayerHealth playerHealth;
     public GameObject magazineBar;
-    private float nextTimeToFire = 0f,magazineBarMax;
+    private float nextTimeToFire = 0f,magazineBarMax, startTime;
     // Start is called before the first frame update
     void Start()
     {
+        startTime = Time.time;
         magazineBarMax = magazineBar.GetComponent<RectTransform>().sizeDelta.y;
         magazine = magazineCapacity;
        // ammo = maxAmmo;
@@ -53,6 +54,12 @@ public class GunMechanics : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reload();
+        }
+        if(Time.time - startTime > 60)
+        {
+            int killsInLastMin = killCount - startKills;
+            PlayerPrefs.SetInt("Difficulty", (killsInLastMin / 10)-2);
+            startKills = killCount;
         }
 
     }
