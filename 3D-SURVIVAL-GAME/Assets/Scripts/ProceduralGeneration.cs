@@ -63,7 +63,8 @@ public class ProceduralGeneration : MonoBehaviour
                 {
                     RoadType clone = road;
                     road.DestroyGameObject();
-                    RoadType newRoad = new RoadType(blockTypes[4], clone.position, clone.rotation);
+                    int lastIndex = blockTypes.Length - 1;
+                    RoadType newRoad = new RoadType(blockTypes[lastIndex], clone.position, clone.rotation);
                     newRoad.InstatiateRoad();
                     tilePlane[clone.position] = newRoad;
                 }
@@ -132,7 +133,7 @@ public class ProceduralGeneration : MonoBehaviour
             this.gameObject = gameObject;
             this.position = pos;
             this.rotation = rotation;
-            this.name = gameObject.name;
+            this.name = gameObject.name.Split(' ')[0];
             connections = new Hashtable();
 
             switch (name)
