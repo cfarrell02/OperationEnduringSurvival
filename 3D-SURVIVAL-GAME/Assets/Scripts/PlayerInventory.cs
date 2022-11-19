@@ -57,7 +57,7 @@ public class PlayerInventory : MonoBehaviour
         GetSelection();
         if (activeItem != null)
         {
-            if (activeItem.name.Length>=13 && activeItem.name.Substring(0,13) == "Pistol_Pickup") weapons[0].SetActive(true);
+            if (activeItem.name.Length >= 13 && activeItem.name.Substring(0, 13) == "Pistol_Pickup") { weapons[0].SetActive(true); }
             else weapons[0].SetActive(false);
             if (activeItem.name.Length >= 12 && activeItem.name.Substring(0,12) == "Knife_Pickup") weapons[1].SetActive(true);
             else weapons[1].SetActive(false);

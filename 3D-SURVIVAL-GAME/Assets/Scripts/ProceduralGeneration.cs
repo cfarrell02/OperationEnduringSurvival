@@ -6,8 +6,9 @@ using Random = UnityEngine.Random;
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject player, objective;
     [SerializeField] private GameObject[] blockTypes;
+
 
     [SerializeField] private int radius = 5, planeOffset = 25;
 
@@ -47,28 +48,34 @@ public class ProceduralGeneration : MonoBehaviour
                     {
                       //int index = Mathf.Abs(z + radius) % 4;
                         int index = Random.Range(0, 4);
-                      //index = 2;
-                      //print(index);
+                        //index = 2;
+                        //print(index);
                         int randomAngle = Random.Range(0, 4) * 90;
-                      //randomAngle = (randomAngle + 90) % 360;
                         RoadType road = new RoadType(blockTypes[index], pos, randomAngle);
+                        if (Vector3.Distance(player.transform.position,startPos)>=100 && Random.Range(0, 5) == 2)
+                        {
+                            road = new RoadType(objective, pos, randomAngle);
+                        }
+                        
+                      //randomAngle = (randomAngle + 90) % 360;
+                        
                         GameObject _plane = road.InstatiateRoad();
                         tilePlane.Add(pos, road);
                     }
                 }
             }
-            foreach(RoadType road in tilePlane.Values)
-            {
-                if (!Connected(road))
-                {
-                    RoadType clone = road;
-                    road.DestroyGameObject();
-                    int lastIndex = blockTypes.Length - 1;
-                    RoadType newRoad = new RoadType(blockTypes[lastIndex], clone.position, clone.rotation);
-                    newRoad.InstatiateRoad();
-                    tilePlane[clone.position] = newRoad;
-                }
-            }
+            //foreach(RoadType road in tilePlane.Values)
+            //{
+            //    if (!Connected(road))
+            //    {
+            //        RoadType clone = road;
+            //        road.DestroyGameObject();
+            //        int lastIndex = blockTypes.Length - 1;
+            //        RoadType newRoad = new RoadType(blockTypes[lastIndex], clone.position, clone.rotation);
+            //        newRoad.InstatiateRoad();
+            //        tilePlane[clone.position] = newRoad;
+            //    }
+            //}
         }
 
     }
@@ -220,10 +227,10 @@ public class ProceduralGeneration : MonoBehaviour
 
         public bool WillConnect(RoadType other, string direction, string otherDirection)
         {
-            print("Type " + name + " with rotation " + rotation);
-            print("This " + direction + " other " + otherDirection);
-            print("Connected with " + other.name + " with rotation " + other.rotation + ": ");
-            print(HasConnection(direction) && other.HasConnection(otherDirection));
+            //print("Type " + name + " with rotation " + rotation);
+            //print("This " + direction + " other " + otherDirection);
+            //print("Connected with " + other.name + " with rotation " + other.rotation + ": ");
+            //print(HasConnection(direction) && other.HasConnection(otherDirection));
             return HasConnection(direction) && other.HasConnection(otherDirection);
             
         }
