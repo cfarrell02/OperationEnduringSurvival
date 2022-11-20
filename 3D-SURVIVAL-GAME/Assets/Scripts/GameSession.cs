@@ -22,12 +22,7 @@ public class GameSession : MonoBehaviour
 
             DontDestroyOnLoad(gameObject);
         }
-        foreach (GameObject item in inventory)
-        {
 
-                    DontDestroyOnLoad(item);
-
-            }
         }
     
 
@@ -35,5 +30,10 @@ public class GameSession : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SaveItems()
+    {
+        foreach(GameObject item in inventory) DontDestroyOnLoad(item);
     }
 }

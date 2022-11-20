@@ -118,6 +118,8 @@ public class PlayerInventory : MonoBehaviour
                 inventoryItems[i] = item;
                 activeItems++;
                 session.inventory = inventoryItems;
+                DontDestroyOnLoad(item);
+                session.SaveItems();
                 return true;
             }
         }
@@ -134,6 +136,7 @@ public class PlayerInventory : MonoBehaviour
             FillInGap(ref inventoryItems, index);
             activeItems--;
             session.inventory = inventoryItems;
+            session.SaveItems();
         }
     }
 
