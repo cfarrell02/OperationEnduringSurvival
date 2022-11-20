@@ -138,7 +138,7 @@ public class ProceduralGeneration : MonoBehaviour
         public RoadType(GameObject gameObject, Vector3 pos , float rotation )
         {
             this.gameObject = gameObject;
-            UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
+//            UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
             this.position = pos;
             this.rotation = rotation;
             this.name = gameObject.name.Split(' ')[0];
