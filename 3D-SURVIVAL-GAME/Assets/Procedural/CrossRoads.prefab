@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 844598610472745040}
   - component: {fileID: 844598610472745071}
   - component: {fileID: 844598610472745070}
+  - component: {fileID: 2409152036771353229}
   m_Layer: 0
   m_Name: CrossRoads
   m_TagString: Untagged
@@ -346,6 +347,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &2409152036771353229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844598610472745069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6334394510242369957
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,6 +373,7 @@ GameObject:
   - component: {fileID: 888022039194724219}
   - component: {fileID: 4603403722552102768}
   - component: {fileID: 2539682160286349531}
+  - component: {fileID: 6173355755551729250}
   m_Layer: 0
   m_Name: Road
   m_TagString: Untagged
@@ -714,6 +728,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &6173355755551729250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6334394510242369957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8775761577882921056
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,6 +754,7 @@ GameObject:
   - component: {fileID: 1198176275308467062}
   - component: {fileID: 6772024962561084394}
   - component: {fileID: 5298918084676384712}
+  - component: {fileID: 5208532021173121528}
   m_Layer: 0
   m_Name: Road (1)
   m_TagString: Untagged
@@ -1082,3 +1109,15 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &5208532021173121528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775761577882921056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

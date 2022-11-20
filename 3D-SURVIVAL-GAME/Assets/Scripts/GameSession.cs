@@ -15,12 +15,21 @@ public class GameSession : MonoBehaviour
         if(numOfGameSessions > 1)
         {
             Destroy(gameObject);
+
         }
         else
         {
+
             DontDestroyOnLoad(gameObject);
         }
-    }
+        foreach (GameObject item in inventory)
+        {
+
+                    DontDestroyOnLoad(item);
+
+            }
+        }
+    
 
     // Update is called once per frame
     void Update()

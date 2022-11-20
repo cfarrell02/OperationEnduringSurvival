@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpawnPoint : MonoBehaviour
 {
     [SerializeField] private GameObject[] enemies;
-    [SerializeField] private float maxSpawnArea;
+    [SerializeField] private float maxSpawnArea = 10, playerSpawnLimit = 40,minSpawnLimitOffset = 0, respawnCooldown = 60;
     [SerializeField] private GameObject[] wayPoints;
     [SerializeField] private GameObject playerCapsule;
     public int maxEnemyCount = 20, spawnRate = 2;
@@ -26,23 +26,30 @@ public class SpawnPoint : MonoBehaviour
         //    print(corners[i]);
         //    Debug.DrawLine(corners[i], corners[i + 1], Color.green);
         //}
-        
+        if(playerCapsule==null)
+        playerCapsule = FindObjectOfType<PlayerInventory>().gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (totalEnemies < maxEnemyCount && Time.time-timeLastSpawned>spawnRate)
+        float minDistance = Mathf.Sqrt(2 * (Mathf.Pow(maxSpawnArea / 2, 2))) + minSpawnLimitOffset;
+        float playerDistance = Vector3.Distance(playerCapsule.transform.position, this.transform.position);
+        bool isEligible = playerDistance > minDistance && playerDistance <= playerSpawnLimit;
+        if (isEligible && totalEnemies < maxEnemyCount && Time.time-timeLastSpawned>spawnRate)
         {
             SpawnEnemy(1);
             timeLastSpawned = Time.time;
         }
     }
 
-    public void ProcessChildDeath()
+    public IEnumerator ProcessChildDeath()
     {
+        yield return new WaitForSeconds(respawnCooldown);
         totalEnemies--;
     }
+
+    
 
     public void SpawnEnemy(int numOfEnemies)
     {

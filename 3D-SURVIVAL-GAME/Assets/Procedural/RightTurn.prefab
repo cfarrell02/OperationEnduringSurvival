@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3326876158113003056}
   - component: {fileID: 2214294601898047382}
   - component: {fileID: 1435955541666104974}
+  - component: {fileID: 887288932827242073}
   m_Layer: 0
   m_Name: Road
   m_TagString: Untagged
@@ -368,6 +369,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &887288932827242073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3945231687547763350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4463972796272906350
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +395,7 @@ GameObject:
   - component: {fileID: 7542152562184633664}
   - component: {fileID: 3001095905089957757}
   - component: {fileID: 1117207224027257216}
+  - component: {fileID: 8923344442725929557}
   m_Layer: 0
   m_Name: RightTurn
   m_TagString: Untagged
@@ -714,6 +728,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &8923344442725929557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4463972796272906350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8146895964054198469
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,6 +754,7 @@ GameObject:
   - component: {fileID: 7415659704441962970}
   - component: {fileID: 614573752478396321}
   - component: {fileID: 8591657562788987876}
+  - component: {fileID: 2117561573674491595}
   m_Layer: 0
   m_Name: Road (1)
   m_TagString: Untagged
@@ -945,9 +972,9 @@ MonoBehaviour:
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 1, y: 1.5883931e-15, z: -2.9391189e-31, w: -1}
-  - {x: 1, y: 7.9419657e-16, z: -1.4695593e-31, w: -1}
-  - {x: 1, y: 7.9419657e-16, z: -1.4695593e-31, w: -1}
+  - {x: 1, y: 1.5883931e-15, z: 0, w: -1}
+  - {x: 1, y: 7.9419657e-16, z: 0, w: -1}
+  - {x: 1, y: 7.9419657e-16, z: 0, w: -1}
   - {x: 1, y: 0, z: 0, w: -1}
   - {x: -1, y: 0, z: 0, w: -1}
   - {x: -1, y: 1.0589286e-15, z: 0, w: -1}
@@ -1082,3 +1109,15 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &2117561573674491595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8146895964054198469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 112f5bb4cd0cc6c488868f12083a2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

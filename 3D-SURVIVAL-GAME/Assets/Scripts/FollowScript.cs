@@ -46,7 +46,7 @@ using Random = UnityEngine.Random;
             }
 
 
-            else
+            else if(waypoints.Length!=0)
             {
                 float distanceToWaypoint = Vector3.Distance(this.transform.position, waypoints[wayPointIndex].transform.position);
 

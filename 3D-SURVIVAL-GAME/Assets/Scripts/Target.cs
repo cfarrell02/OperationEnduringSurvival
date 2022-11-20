@@ -20,7 +20,7 @@ public class Target : MonoBehaviour
 
     void Die()
     {
-        parentSpawnPoint.ProcessChildDeath();
+        StartCoroutine(parentSpawnPoint.ProcessChildDeath());
         Destroy(gameObject);
     }
 
@@ -30,6 +30,7 @@ public class Target : MonoBehaviour
         int difficulty = PlayerPrefs.GetInt("Difficulty");
         health += 20 * difficulty;
     }
+
 
     // Update is called once per frame
     void Update()

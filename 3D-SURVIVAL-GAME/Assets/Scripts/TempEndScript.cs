@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class TempEndScript : MonoBehaviour
 {
-    private AudioSource audioSource;
+
     [SerializeField] private AudioClip audioClip;
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -24,6 +24,7 @@ public class TempEndScript : MonoBehaviour
         yield return new WaitForSeconds(timeToWait);
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
         Cursor.lockState = CursorLockMode.None;
+        print(currentIndex);
         SceneManager.LoadScene(currentIndex + 1);
         
 
@@ -35,6 +36,8 @@ public class TempEndScript : MonoBehaviour
         if (other.name == "PlayerCapsule")
         {
             print("Loading level " + (SceneManager.GetActiveScene().buildIndex + 1));
+            AudioSource audioSource = other.GetComponent<AudioSource>();
+            if (audioClip != null)
             audioSource.PlayOneShot(audioClip);
             StartCoroutine(LoadNextLevel(4));
             

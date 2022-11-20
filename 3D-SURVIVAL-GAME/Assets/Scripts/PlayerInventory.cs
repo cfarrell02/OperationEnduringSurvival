@@ -36,10 +36,11 @@ public class PlayerInventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         session = FindObjectOfType<GameSession>();
         audioSource = GetComponent<AudioSource>();
         health = GetComponent<PlayerHealth>();
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 1 || session.inventory.Length == 0)
         {
             inventoryItems = new GameObject[inventoryCapacity];
             session.inventory = inventoryItems;
@@ -52,7 +53,6 @@ public class PlayerInventory : MonoBehaviour
     void Update()
 
     {
-
 
         GetSelection();
         if (activeItem != null)
@@ -71,7 +71,9 @@ public class PlayerInventory : MonoBehaviour
             
             if (inventoryItems[i] == null)
             {
+                
                 inventoryButtons[i].gameObject.SetActive(false);
+
                 continue;
             }
             inventoryButtons[i].gameObject.SetActive(true);

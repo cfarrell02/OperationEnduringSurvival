@@ -76,6 +76,7 @@ public class GunMechanics : MonoBehaviour
 
     void Shoot()
     {
+        if (Time.timeScale == 0) return;
         if (magazine < 1) {
             Reload();
             return;
@@ -85,7 +86,8 @@ public class GunMechanics : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
         {
-            if (hit.transform.parent.name.Equals(this.transform.name)) return;
+            print("Shot: " + hit.transform.name);
+            if (hit.transform.parent != null && hit.transform.parent.name.Equals(this.transform.name)) return;
             Target target = hit.transform.GetComponent<Target>();
             if (target != null)
             {
