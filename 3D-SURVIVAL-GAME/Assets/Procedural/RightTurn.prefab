@@ -670,7 +670,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: 541e5c56a72cf384ea1547c97e6f8a93, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -945,9 +945,9 @@ MonoBehaviour:
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 1, y: 1.5883931e-15, z: 0, w: -1}
-  - {x: 1, y: 7.9419657e-16, z: 0, w: -1}
-  - {x: 1, y: 7.9419657e-16, z: 0, w: -1}
+  - {x: 1, y: 1.5883931e-15, z: -2.9391189e-31, w: -1}
+  - {x: 1, y: 7.9419657e-16, z: -1.4695593e-31, w: -1}
+  - {x: 1, y: 7.9419657e-16, z: -1.4695593e-31, w: -1}
   - {x: 1, y: 0, z: 0, w: -1}
   - {x: -1, y: 0, z: 0, w: -1}
   - {x: -1, y: 1.0589286e-15, z: 0, w: -1}
