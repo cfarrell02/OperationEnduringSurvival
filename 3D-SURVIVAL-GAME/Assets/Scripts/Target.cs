@@ -10,6 +10,7 @@ public class Target : MonoBehaviour
     public bool TakeDamage(float amount)
     {
         health -= amount;
+        print(health);
         if (health <= 0)
         {
             Die();
@@ -20,6 +21,7 @@ public class Target : MonoBehaviour
 
     void Die()
     {
+        if(parentSpawnPoint != null)
         StartCoroutine(parentSpawnPoint.ProcessChildDeath());
         Destroy(gameObject);
     }

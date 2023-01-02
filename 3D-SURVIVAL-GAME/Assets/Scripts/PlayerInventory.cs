@@ -40,7 +40,7 @@ public class PlayerInventory : MonoBehaviour
         session = FindObjectOfType<GameSession>();
         audioSource = GetComponent<AudioSource>();
         health = GetComponent<PlayerHealth>();
-        if (SceneManager.GetActiveScene().buildIndex == 1 || session.inventory.Length == 0)
+        if (SceneManager.GetActiveScene().buildIndex == 3 || session.inventory.Length == 0)
         {
             inventoryItems = new GameObject[inventoryCapacity];
             session.inventory = inventoryItems;
